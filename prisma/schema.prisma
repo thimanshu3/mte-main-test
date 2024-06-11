@@ -1,0 +1,1699 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? @db.Text
+    session_state     String?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+    @@map("Accounts")
+}
+
+model SalesCollection {
+    id               String    @id @default(cuid())
+    salesOrderNumber String?
+    type             String?
+    portOfDischarge  String?
+    pinvNumber       String?
+    bvRef            String?
+    fileNumber       String?
+    remarks          String?
+    deletedAt        DateTime? @db.Timestamptz()
+    createdAt        DateTime  @default(now()) @db.Timestamptz()
+    updatedAt        DateTime  @default(now()) @updatedAt @db.Timestamptz()
+
+    deletedById String?
+    deletedBy   User?   @relation("deletedSalesCollections", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    createdById String?
+    createdBy   User?   @relation("createdSalesCollection", fields: [createdById], references: [id], onDelete: Cascade)
+
+    updatedById String?
+    updatedBy   User?   @relation("updatedSalesCollections", fields: [updatedById], references: [id], onDelete: Cascade)
+}
+
+model InvoiceCollection {
+    id                        String    @id @default(cuid())
+    invoiceNumber             String?
+    invoiceDate               DateTime? @db.Timestamptz()
+    customerName              String?
+    inspectionAppliedDate     DateTime? @db.Timestamptz()
+    modeOfTransPort           String?
+    from                      String?
+    dateOfLoading             DateTime? @db.Timestamptz()
+    onBoardDate               DateTime? @db.Timestamptz()
+    cntrNumber                String?
+    shippingBillNumber        Float?
+    shippingBillDate          DateTime? @db.Timestamptz()
+    seaWayBlNumber            String?
+    seaWayBlIssueDate         DateTime? @db.Timestamptz()
+    docsSubmissionDate        DateTime? @db.Timestamptz()
+    feriNumber                String?
+    feriDate                  DateTime? @db.Timestamptz()
+    crfApplyDate              DateTime? @db.Timestamptz()
+    crfIssueDate              DateTime? @db.Timestamptz()
+    etaOfShippment            String?
+    portOfLoading             String?
+    portOfDischarge           String?
+    policyNumber              String?
+    rotdpAmount               Float?
+    dbk                       Float?
+    dbkScrollNumber           String?
+    dbkScrollDate             DateTime? @db.Timestamptz()
+    dbkCreditDate             DateTime? @db.Timestamptz()
+    rodtepRemarksScriptNumber String?
+    rodtepRemarksScriptDate   DateTime? @db.Timestamptz()
+    brcSubmissionDate         DateTime? @db.Timestamptz()
+    brcNumber                 String?
+    brcDate                   DateTime? @db.Timestamptz()
+    billIdNumber              String?
+    realisationDate           DateTime? @db.Timestamptz()
+    ammountSettledNumber      Float?
+    billAmountUsd             Float?
+    freightUsd                Float?
+    insuranceUsd              Float?
+    fobNetUsd                 Float?
+    taxableValueInr           Float?
+    igstInr                   Float?
+    amountReceivedPerTally    String?
+    fobValueInr               Float?
+    freightInr                Float?
+    insuranceInr              Float?
+    exchangeRateInr           Float?
+    remarks                   String?
+
+    deletedAt DateTime? @db.Timestamptz()
+    createdAt DateTime  @default(now()) @db.Timestamptz()
+    updatedAt DateTime  @default(now()) @updatedAt @db.Timestamptz()
+
+    deletedById String?
+    deletedBy   User?   @relation("deletedInvoiceCollections", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    createdById String?
+    createdBy   User?   @relation("createdInvoiceCollections", fields: [createdById], references: [id], onDelete: Cascade)
+
+    updatedById String?
+    updatedBy   User?   @relation("updatedInvoiceCollections", fields: [updatedById], references: [id], onDelete: Cascade)
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime @db.Timestamptz()
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("Sessions")
+}
+
+enum Role {
+    ADMIN
+    ADMINVIEWER
+    USER
+    USERVIEWER
+    FULFILMENT
+    SUPPLIER
+}
+
+enum Gender {
+    Male
+    Female
+    Other
+}
+
+model User {
+    id            String    @id @default(cuid())
+    name          String?
+    email         String?   @unique
+    mobile        String?   @unique
+    whatsapp      String?
+    emailVerified DateTime? @db.Timestamptz()
+    image         String?
+    password      String?
+    active        Boolean   @default(true)
+    role          Role      @default(USER)
+    supplierId    String?
+
+    accounts Account[]
+    sessions Session[]
+    supplier Supplier? @relation("supplierUsers", fields: [supplierId], references: [id], onDelete: Cascade)
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
+    createdById String?
+    createdBy   User?    @relation("createdUsers", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?    @relation("updatedUsers", fields: [updatedById], references: [id], onDelete: Cascade)
+
+    createdSuppliers                            Supplier[]                             @relation("createdSuppliers")
+    updatedSuppliers                            Supplier[]                             @relation("updatedSuppliers")
+    deletedSuppliers                            Supplier[]                             @relation("deletedSuppliers")
+    createdCustomers                            Customer[]                             @relation("createdCustomers")
+    updatedCustomers                            Customer[]                             @relation("updatedCustomers")
+    deletedCustomers                            Customer[]                             @relation("deletedCustomers")
+    createdSites                                Site[]                                 @relation("createdSites")
+    updatedSites                                Site[]                                 @relation("updatedSites")
+    createdInquiries                            Inquiry[]                              @relation("createdInquiries")
+    updatedInquiries                            Inquiry[]                              @relation("updatedInquiries")
+    deletedInquiries                            Inquiry[]                              @relation("deletedInquiries")
+    createdUsers                                User[]                                 @relation("createdUsers")
+    updatedUsers                                User[]                                 @relation("updatedUsers")
+    createdUnits                                Unit[]                                 @relation("createdUnits")
+    updatedUnits                                Unit[]                                 @relation("updatedUnits")
+    deletedUnits                                Unit[]                                 @relation("deletedUnits")
+    createdGstRates                             GstRate[]                              @relation("createdGstRates")
+    updatedGstRates                             GstRate[]                              @relation("updatedGstRates")
+    deletedGstRates                             GstRate[]                              @relation("deletedGstRates")
+    inquiries                                   Inquiry[]                              @relation("frontPersonRepresentative")
+    createdInquiryStatuses                      InquiryStatus[]                        @relation("createdInquiryStatuses")
+    updatedInquiryStatuses                      InquiryStatus[]                        @relation("updatedInquiryStatuses")
+    deletedInquiryStatuses                      InquiryStatus[]                        @relation("deletedInquiryStatuses")
+    createdInquiryResults                       InquiryResult[]                        @relation("createdInquiryResults")
+    updatedInquiryResults                       InquiryResult[]                        @relation("updatedInquiryResults")
+    deletedInquiryResults                       InquiryResult[]                        @relation("deletedInquiryResults")
+    createdInquiryCancelReasons                 InquiryCancelReason[]                  @relation("createdInquiryCancelReasons")
+    updatedInquiryCancelReasons                 InquiryCancelReason[]                  @relation("updatedInquiryCancelReasons")
+    deletedInquiryCancelReasons                 InquiryCancelReason[]                  @relation("deletedInquiryCancelReasons")
+    createdBusinessTypes                        BusinessType[]                         @relation("createdBusinessTypes")
+    updatedBusinessTypes                        BusinessType[]                         @relation("updatedBusinessTypes")
+    deletedBusinessTypes                        BusinessType[]                         @relation("deletedBusinessTypes")
+    createdPaymentTerms                         PaymentTerm[]                          @relation("createdPaymentTerms")
+    updatedPaymentTerms                         PaymentTerm[]                          @relation("updatedPaymentTerms")
+    deletedPaymentTerms                         PaymentTerm[]                          @relation("deletedPaymentTerms")
+    createdInquiriesSentToSupplier              InquiriesSentToSupplier[]              @relation("createdInquiriesSentToSupplier")
+    updatedInquiriesSentToSupplier              InquiriesSentToSupplier[]              @relation("updatedInquiriesSentToSupplier")
+    createdInquiriesSentToSupplierResendHistory InquiriesSentToSupplierResendHistory[] @relation("createdInquiriesSentToSupplierResendHistory")
+    createdOfferSentToCustomer                  OfferSentToCustomer[]                  @relation("createdOfferSentToCustomer")
+    updatedOfferSentToCustomer                  OfferSentToCustomer[]                  @relation("updatedOfferSentToCustomer")
+    createdOfferSentToCustomerResendHistory     OfferSentToCustomerResendHistory[]     @relation("createdOfferSentToCustomerResendHistory")
+    createdSalesOrders                          SalesOrder[]                           @relation("createdSalesOrders")
+    updatedSalesOrders                          SalesOrder[]                           @relation("updatedSalesOrders")
+    salesOrders                                 SalesOrder[]                           @relation("representativeUserSalesOrders")
+    createdPurchaseOrder                        PurchaseOrder[]                        @relation("createdPurchaseOrders")
+    updatedPurchaseOrder                        PurchaseOrder[]                        @relation("updatedPurchaseOrders")
+    purchaseOrders                              PurchaseOrder[]                        @relation("representativeUserPurchaseOrders")
+    createdTeams                                Team[]                                 @relation("createdTeams")
+    updatedTeams                                Team[]                                 @relation("updatedTeams")
+    teamUser                                    TeamUser[]
+    createdTaskLists                            TaskList[]                             @relation("createdTaskLists")
+    updatedTaskLists                            TaskList[]                             @relation("updatedTaskLists")
+    deletedTaskLists                            TaskList[]                             @relation("deletedTaskLists")
+    createdTasks                                Task[]                                 @relation("createdTasks")
+    updatedTasks                                Task[]                                 @relation("updatedTasks")
+    deletedTasks                                Task[]                                 @relation("deletedTasks")
+    taskAssignedUsers                           TaskAssignedUser[]                     @relation("taskAssignedUsers")
+    createdTaskAssignedUsers                    TaskAssignedUser[]                     @relation("createdTaskAssignedUsers")
+    createdTaskActivities                       TaskActivity[]                         @relation("createdTaskActivities")
+    additionalUserTaskActivities                TaskActivity[]                         @relation("additionalUserTaskActivities")
+    createdTaskCheckLists                       TaskCheckList[]                        @relation("createdTaskCheckLists")
+    updatedTaskCheckLists                       TaskCheckList[]                        @relation("updatedTaskCheckLists")
+    createdTaskCheckListItem                    TaskCheckListItem[]                    @relation("createdTaskCheckListItems")
+    updatedTaskCheckListItem                    TaskCheckListItem[]                    @relation("updatedTaskCheckListItems")
+    createdFulfilmentLogs                       FulfilmentLog[]                        @relation("createdFulfilmentLogs")
+    updatedFulfilmentLogs                       FulfilmentLog[]                        @relation("updatedFulfilmentLogs")
+    createdAddresses                            Address[]                              @relation("createdAddresses")
+    updatedAddresses                            Address[]                              @relation("updatedAddresses")
+    deletedAddresses                            Address[]                              @relation("deletedAddresses")
+    createdExpenses                             Expense[]                              @relation("createdExpenses")
+    updatedExpenses                             Expense[]                              @relation("updatedExpenses")
+    deletedExpenses                             Expense[]                              @relation("deletedExpenses")
+    createdPurchaseOrderEmailHistory            PurchaseOrderEmailHistory[]            @relation("createdPurchaseOrderEmailHistory")
+    updatedPurchaseOrderEmailHistory            PurchaseOrderEmailHistory[]            @relation("updatedPurchaseOrderEmailHistory")
+    createdInvoices                             Invoice[]                              @relation("createdInvoices")
+    updatedInvoices                             Invoice[]                              @relation("updatedInvoices")
+    createdInvoices2                            Invoice2[]                             @relation("createdInvoices2")
+    updatedInvoices2                            Invoice2[]                             @relation("updatedInvoices2")
+    createdPorts                                Port[]                                 @relation("createdPorts")
+    updatedPorts                                Port[]                                 @relation("updatedPorts")
+    deletedPorts                                Port[]                                 @relation("deletedPorts")
+    createdBankAccounts                         BankAccount[]                          @relation("createdBankAccounts")
+    updatedBankAccounts                         BankAccount[]                          @relation("updatedBankAccounts")
+    verifiedBankAccounts                        BankAccount[]                          @relation("verifiedBankAccounts")
+    createdCurrency                             Currency[]                             @relation("createdCurrency")
+    updatedCurrency                             Currency[]                             @relation("updatedCurrency")
+    deletedCurrency                             Currency[]                             @relation("deletedCurrency")
+    createdNotifyParty                          NotifyParty[]                          @relation("createdNotifyParty")
+    updatedNotifyParty                          NotifyParty[]                          @relation("updatedNotifyParty")
+    deletedNotifyParty                          NotifyParty[]                          @relation("deletedNotifyParty")
+    createdExporterDetails                      ExporterDetails[]                      @relation("createdExporterDetails")
+    updatedExporterDetails                      ExporterDetails[]                      @relation("updatedExporterDetails")
+    deletedExporterDetails                      ExporterDetails[]                      @relation("deletedExporterDetails")
+    createdCountryOfOrigin                      CountryOfOrigin[]                      @relation("createdCountryOfOrigin")
+    updatedCountryOfOrigin                      CountryOfOrigin[]                      @relation("updatedCountryOfOrigin")
+    deletedCountryOfOrigin                      CountryOfOrigin[]                      @relation("deletedCountryOfOrigin")
+    createdLUT                                  Lut[]                                  @relation("createdLUT")
+    updatedLUT                                  Lut[]                                  @relation("updatedLUT")
+    deletedLUT                                  Lut[]                                  @relation("deletedLUT")
+    createdIEC                                  IecCode[]                              @relation("createdIEC")
+    updatedIEC                                  IecCode[]                              @relation("updatedIEC")
+    deletedIEC                                  IecCode[]                              @relation("deletedIEC")
+    createdPurchaseOrderExpenses                PurchaseOrderExpense[]                 @relation("createdPurchaseOrderExpenses")
+    updatedPurchaseOrderExpenses                PurchaseOrderExpense[]                 @relation("updatedPurchaseOrderExpenses")
+    createdSalesOrderExpenses                   SalesOrderExpense[]                    @relation("createdSalesOrderExpenses")
+    updatedSalesOrderExpenses                   SalesOrderExpense[]                    @relation("updatedSalesOrderExpenses")
+    Invoice                                     Invoice[]                              @relation("representativeUserInvoices")
+    Invoice2                                    Invoice2[]                             @relation("representativeUserInvoices2")
+    createdSalesCollection                      SalesCollection[]                      @relation("createdSalesCollection")
+    updatedSalesCollections                     SalesCollection[]                      @relation("updatedSalesCollections")
+    deletedPurchaseOrderExpenses                PurchaseOrderExpense[]                 @relation("deletedPurchaseOrderExpenses")
+    deletedSalesOrderExpenses                   SalesOrderExpense[]                    @relation("deletedSalesOrderExpenses")
+    deletedSalesCollections                     SalesCollection[]                      @relation("deletedSalesCollections")
+    deletedInvoiceCollections                   InvoiceCollection[]                    @relation("deletedInvoiceCollections")
+    createdInvoiceCollections                   InvoiceCollection[]                    @relation("createdInvoiceCollections")
+    updatedInvoiceCollections                   InvoiceCollection[]                    @relation("updatedInvoiceCollections")
+    createdPaymentRequests                      PaymentRequest[]                       @relation("createdPaymentRequests")
+    updatedPaymentRequests                      PaymentRequest[]                       @relation("updatedPaymentRequests")
+
+    @@map("Users")
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime @db.Timestamptz()
+
+    @@unique([identifier, token])
+    @@map("VerificationTokens")
+}
+
+model Example {
+    id String @id @default(cuid())
+
+    createdAt DateTime @default(now()) @db.Timestamptz()
+    updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+    @@map("Examples")
+}
+
+model Unit {
+    id   String @id @default(cuid())
+    name String @unique
+
+    createdAt   DateTime  @default(now()) @db.Timestamptz()
+    updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt   DateTime? @db.Timestamptz()
+    createdById String?
+    createdBy   User?     @relation("createdUnits", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?     @relation("updatedUnits", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+    deletedBy   User?     @relation("deletedUnits", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    salesInquiries        Inquiry[]           @relation("salesUnitInquiries")
+    purchaseInquiries     Inquiry[]           @relation("purchaseUnitInquiries")
+    unitSalesOrderItem    SalesOrderItem[]    @relation("unitSalesOrderItem")
+    unitPurchaseOrderItem PurchaseOrderItem[] @relation("unitPurchaseOrderItem")
+
+    @@map("Units")
+}
+
+model GstRate {
+    id   String @id @default(cuid())
+    rate Float  @unique
+
+    createdAt   DateTime  @default(now()) @db.Timestamptz()
+    updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt   DateTime? @db.Timestamptz()
+    createdById String?
+    createdBy   User?     @relation("createdGstRates", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?     @relation("updatedGstRates", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+    deletedBy   User?     @relation("deletedGstRates", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    inquiries            Inquiry[]              @relation("gstRateInquiries")
+    purchaseOrderItem    PurchaseOrderItem[]    @relation("gstRatePurchaseOrderItem")
+    purchaseOrderExpense PurchaseOrderExpense[] @relation("gstRatePurchaseOrderExpense")
+
+    @@map("GstRates")
+}
+
+model BusinessType {
+    id   String @id @default(cuid())
+    name String @unique
+
+    createdAt   DateTime  @default(now()) @db.Timestamptz()
+    updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt   DateTime? @db.Timestamptz()
+    createdById String?
+    createdBy   User?     @relation("createdBusinessTypes", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?     @relation("updatedBusinessTypes", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+    deletedBy   User?     @relation("deletedBusinessTypes", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    supplier Supplier[] @relation("businessTypeSuppliers")
+
+    @@map("BusinessTypes")
+}
+
+model PaymentTerm {
+    id   String @id @default(cuid())
+    name String @unique
+
+    createdAt   DateTime  @default(now()) @db.Timestamptz()
+    updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt   DateTime? @db.Timestamptz()
+    createdById String?
+    createdBy   User?     @relation("createdPaymentTerms", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?     @relation("updatedPaymentTerms", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+    deletedBy   User?     @relation("deletedPaymentTerms", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    supplier       Supplier[]             @relation("paymentTermSuppliers")
+    conditions     PaymentTermCondition[] @relation("paymentTermConditions")
+    purchaseOrders PurchaseOrder[]        @relation("paymentTermPurchaseOrders")
+
+    @@map("PaymentTerms")
+}
+
+model PaymentTermCondition {
+    id            String  @id @default(cuid())
+    order         Int
+    paymentTermId String
+    percentage    Float
+    description   String?
+    days          Int?
+
+    paymentTerm PaymentTerm @relation("paymentTermConditions", fields: [paymentTermId], references: [id], onDelete: Cascade)
+
+    @@map("PaymentTermConditions")
+}
+
+model Expense {
+    id   String @id @default(cuid())
+    name String @unique
+
+    createdAt   DateTime  @default(now()) @db.Timestamptz()
+    updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt   DateTime? @db.Timestamptz()
+    createdById String?
+    createdBy   User?     @relation("createdExpenses", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?     @relation("updatedExpenses", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+    deletedBy   User?     @relation("deletedExpenses", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    @@map("Expenses")
+}
+
+model Currency {
+    id     String @id @default(cuid())
+    name   String @unique
+    symbol String @unique
+
+    createdAt   DateTime  @default(now()) @db.Timestamptz()
+    updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt   DateTime? @db.Timestamptz()
+    createdById String?
+    createdBy   User?     @relation("createdCurrency", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?     @relation("updatedCurrency", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+    deletedBy   User?     @relation("deletedCurrency", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    supplierCurrency Inquiry[]       @relation("supplierCurrency")
+    customerCurrency Inquiry[]       @relation("customerCurrency")
+    invoiceCurrency  Invoice[]       @relation("invoiceCurrency")
+    invoice2Currency Invoice2[]      @relation("invoice2Currency")
+    salesOrders      SalesOrder[]    @relation("salesOrderCurrency")
+    purchaseOrders   PurchaseOrder[] @relation("purchaseOrderCurrency")
+
+    @@map("Currency")
+}
+
+model NotifyParty {
+    id      String @id @default(cuid())
+    name    String
+    address String
+
+    createdAt   DateTime  @default(now()) @db.Timestamptz()
+    updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt   DateTime? @db.Timestamptz()
+    createdById String?
+    createdBy   User?     @relation("createdNotifyParty", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?     @relation("updatedNotifyParty", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+    deletedBy   User?     @relation("deletedNotifyParty", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    invoiceNotifyParty   Invoice[]  @relation("invoiceNotifyParty")
+    invoiceNotifyParty2  Invoice[]  @relation("invoiceNotifyParty2")
+    invoice2NotifyParty  Invoice2[] @relation("invoice2NotifyParty")
+    invoice2NotifyParty2 Invoice2[] @relation("invoice2NotifyParty2")
+
+    @@map("NotifyParty")
+}
+
+model ExporterDetails {
+    id      String @id @default(cuid())
+    name    String
+    address String
+
+    createdAt               DateTime   @default(now()) @db.Timestamptz()
+    updatedAt               DateTime   @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt               DateTime?  @db.Timestamptz()
+    createdById             String?
+    createdBy               User?      @relation("createdExporterDetails", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById             String?
+    updatedBy               User?      @relation("updatedExporterDetails", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById             String?
+    deletedBy               User?      @relation("deletedExporterDetails", fields: [deletedById], references: [id], onDelete: Cascade)
+    invoiceExporterDetails  Invoice[]  @relation("invoiceExporterDetails")
+    invoice2ExporterDetails Invoice2[] @relation("invoice2ExporterDetails")
+
+    @@map("ExporterDetails")
+}
+
+model CountryOfOrigin {
+    id   String @id @default(cuid())
+    name String @unique
+
+    createdAt   DateTime  @default(now()) @db.Timestamptz()
+    updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt   DateTime? @db.Timestamptz()
+    createdById String?
+    createdBy   User?     @relation("createdCountryOfOrigin", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?     @relation("updatedCountryOfOrigin", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+    deletedBy   User?     @relation("deletedCountryOfOrigin", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    invoiceCountryOfOrigin  InvoiceItem[]  @relation("invoiceCountryOfOrigin")
+    invoice2CountryOfOrigin Invoice2Item[] @relation("invoice2CountryOfOrigin")
+
+    @@map("CountryOfOrigin")
+}
+
+model Lut {
+    id   String @id @default(cuid())
+    name String @unique
+
+    createdAt   DateTime  @default(now()) @db.Timestamptz()
+    updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt   DateTime? @db.Timestamptz()
+    createdById String?
+    createdBy   User?     @relation("createdLUT", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?     @relation("updatedLUT", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+    deletedBy   User?     @relation("deletedLUT", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    invoiceLUT  Invoice[]  @relation("invoiceLUT")
+    invoice2LUT Invoice2[] @relation("invoice2LUT")
+
+    @@map("Lut")
+}
+
+model IecCode {
+    id   String @id @default(cuid())
+    name String @unique
+
+    createdAt   DateTime  @default(now()) @db.Timestamptz()
+    updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt   DateTime? @db.Timestamptz()
+    createdById String?
+    createdBy   User?     @relation("createdIEC", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?     @relation("updatedIEC", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+    deletedBy   User?     @relation("deletedIEC", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    invoiceIecCode  Invoice[]  @relation("invoiceIecCode")
+    invoice2IecCode Invoice2[] @relation("invoice2IecCode")
+
+    @@map("IecCode")
+}
+
+model Attachment {
+    id                String  @id @default(cuid())
+    originalFilename  String
+    newFilename       String  @unique
+    url               String  @unique
+    inquiryId         String?
+    supplierId        String?
+    taskId            String?
+    whatsAppMessageId String? @unique
+    invoiceId         String? @unique
+    inquiryImageId    String? @unique
+
+    inquiry         Inquiry?         @relation("inquiryAttachments", fields: [inquiryId], references: [id], onDelete: Cascade)
+    supplier        Supplier?        @relation("supplierAttachments", fields: [supplierId], references: [id], onDelete: Cascade)
+    task            Task?            @relation("taskAttachments", fields: [taskId], references: [id], onDelete: Cascade)
+    whatsAppMessage WhatsAppMessage? @relation("whatsAppMessageAttachment", fields: [whatsAppMessageId], references: [id], onDelete: Cascade)
+    inquiryImage    Inquiry?         @relation("inquiryImage", fields: [inquiryImageId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @db.Timestamptz()
+    updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+    @@map("Attachments")
+}
+
+enum TaxCalcType {
+    InterState
+    IntraState
+}
+
+model Supplier {
+    id                         String       @id @default(cuid())
+    name                       String       @unique
+    businessTypeId             String?
+    address                    String?
+    gst                        String?
+    pan                        String?
+    mobile                     String?
+    alternateMobile            String?
+    email                      String?
+    email2                     String?
+    email3                     String?
+    whatsapp                   String?
+    website                    String?
+    paymentTermId              String?
+    purchaseContactName        String?
+    purchaseContactGender      Gender?
+    purchaseContactDesignation String?
+    purchaseContactAadhar      String?
+    purchaseContactPan         String?
+    purchaseContactAddress     String?
+    purchaseContactMobile      String?
+    accountsContactName        String?
+    accountsContactGender      Gender?
+    accountsContactDesignation String?
+    accountsContactAadhar      String?
+    accountsContactPan         String?
+    accountsContactAddress     String?
+    accountsContactMobile      String?
+    logisticContactName        String?
+    logisticContactGender      Gender?
+    logisticContactDesignation String?
+    logisticContactAadhar      String?
+    logisticContactPan         String?
+    logisticContactAddress     String?
+    logisticContactMobile      String?
+    bankName                   String?
+    bankBranchCode             String?
+    bankAccountHolderName      String?
+    bankAccountNumber          String?
+    bankIfscCode               String?
+    bankMicrNumber             String?
+    taxCalcType                TaxCalcType?
+    primaryBankAccountId       String?
+
+    businessType       BusinessType? @relation("businessTypeSuppliers", fields: [businessTypeId], references: [id], onDelete: Cascade)
+    paymentTerm        PaymentTerm?  @relation("paymentTermSuppliers", fields: [paymentTermId], references: [id], onDelete: Cascade)
+    attachments        Attachment[]  @relation("supplierAttachments")
+    primaryBankAccount BankAccount?  @relation("supplierPrimaryBankAccount", fields: [primaryBankAccountId], references: [id], onDelete: Cascade)
+
+    createdAt   DateTime  @default(now()) @db.Timestamptz()
+    updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt   DateTime? @db.Timestamptz()
+    createdById String?
+    createdBy   User?     @relation("createdSuppliers", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?     @relation("updatedSuppliers", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+    deletedBy   User?     @relation("deletedSuppliers", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    users                   User[]                    @relation("supplierUsers")
+    inquiries               Inquiry[]                 @relation("supplierInquiries")
+    inquiriesSentToSupplier InquiriesSentToSupplier[] @relation("inquiriesSentToSupplierSupplier")
+    purchaseOrders          PurchaseOrder[]           @relation("supplierPurchaseOrders")
+    fulfilmentLogs          FulfilmentLog[]           @relation("supplierFulfilmentLogs")
+    bankAccounts            BankAccount[]             @relation("supplierBankAccounts")
+    paymentRequests         SupplierPaymentRequest[]  @relation("supplierPaymentRequests")
+
+    @@map("Suppliers")
+}
+
+model BankAccount {
+    id                  String  @id @default(cuid())
+    hash                String  @unique
+    beneficiaryName     String
+    bankName            String
+    accountNumber       String
+    ifscCode            String
+    mailingAddressLine1 String
+    mailingAddressLine2 String?
+    mailingAddressLine3 String?
+    beneficiaryCity     String
+    beneficiaryZipCode  String
+    isVerified          Boolean @default(false)
+    isVerificationSent  Boolean @default(false)
+    supplierId          String
+
+    verificationSentAt DateTime? @db.Timestamptz()
+    verifiedAt         DateTime? @db.Timestamptz()
+    verifiedById       String?
+
+    supplier                   Supplier   @relation("supplierBankAccounts", fields: [supplierId], references: [id], onDelete: Cascade)
+    supplierPrimaryBankAccount Supplier[] @relation("supplierPrimaryBankAccount")
+    verifiedBy                 User?      @relation("verifiedBankAccounts", fields: [verifiedById], references: [id], onDelete: Cascade)
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
+    createdById String?
+    createdBy   User?    @relation("createdBankAccounts", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?    @relation("updatedBankAccounts", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+
+    @@map("BankAccounts")
+}
+
+model Customer {
+    id            String  @id @default(cuid())
+    id2           String? @unique
+    name          String
+    address       String?
+    contactName   String?
+    contactMobile String?
+    contactEmail  String?
+    contactEmail2 String?
+    contactEmail3 String?
+
+    createdAt   DateTime  @default(now()) @db.Timestamptz()
+    updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt   DateTime? @db.Timestamptz()
+    createdById String?
+    createdBy   User?     @relation("createdCustomers", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?     @relation("updatedCustomers", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+    deletedBy   User?     @relation("deletedCustomers", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    sites               Site[]                @relation("customerSites")
+    inquiries           Inquiry[]             @relation("customerInquiries")
+    offerSentToCustomer OfferSentToCustomer[] @relation("offerSentToCustomerCustomer")
+    salesOrders         SalesOrder[]          @relation("customerSalesOrders")
+    invoices            Invoice[]             @relation("customerInvoices")
+    invoices2           Invoice2[]            @relation("customerInvoices2")
+
+    @@map("Customers")
+}
+
+model Site {
+    id         String @id @default(cuid())
+    name       String
+    customerId String
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
+    createdById String?
+    createdBy   User?    @relation("createdSites", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?    @relation("updatedSites", fields: [updatedById], references: [id], onDelete: Cascade)
+
+    customer            Customer              @relation("customerSites", fields: [customerId], references: [id], onDelete: Cascade)
+    inquiries           Inquiry[]             @relation("siteInquiries")
+    salesOrder          SalesOrder[]          @relation("siteSalesOrders")
+    offerSentToCustomer OfferSentToCustomer[] @relation("offerSentToCustomerSite")
+
+    @@unique([customerId, name])
+    @@map("Sites")
+}
+
+model InquiryStatus {
+    id   String @id @default(cuid())
+    name String @unique
+
+    createdAt   DateTime  @default(now()) @db.Timestamptz()
+    updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt   DateTime? @db.Timestamptz()
+    createdById String?
+    createdBy   User?     @relation("createdInquiryStatuses", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?     @relation("updatedInquiryStatuses", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+    deletedBy   User?     @relation("deletedInquiryStatuses", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    inquiries Inquiry[] @relation("status")
+
+    @@map("InquiryStatuses")
+}
+
+model InquiryResult {
+    id   String @id @default(cuid())
+    name String @unique
+
+    createdAt   DateTime  @default(now()) @db.Timestamptz()
+    updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt   DateTime? @db.Timestamptz()
+    createdById String?
+    createdBy   User?     @relation("createdInquiryResults", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?     @relation("updatedInquiryResults", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+    deletedBy   User?     @relation("deletedInquiryResults", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    inquiries Inquiry[] @relation("result")
+
+    @@map("InquiryResults")
+}
+
+model InquiryCancelReason {
+    id   String @id @default(cuid())
+    name String @unique
+
+    createdAt   DateTime  @default(now()) @db.Timestamptz()
+    updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt   DateTime? @db.Timestamptz()
+    createdById String?
+    createdBy   User?     @relation("createdInquiryCancelReasons", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?     @relation("updatedInquiryCancelReasons", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+    deletedBy   User?     @relation("deletedInquiryCancelReasons", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    inquiries Inquiry[] @relation("cancelReason")
+
+    @@map("InquiryCancelReasons")
+}
+
+model Inquiry {
+    id                          String    @id @default(cuid())
+    counter                     Int       @unique @default(autoincrement())
+    id2                         String    @unique
+    date                        DateTime  @default(now()) @db.Timestamptz()
+    frontPersonRepresentativeId String
+    customerId                  String
+    siteId                      String?
+    prNumberAndName             String?
+    salesDescription            String?
+    salesUnitId                 String?
+    quantity                    Float?
+    size                        String?
+    purchaseDescription         String?
+    purchaseUnitId              String?
+    gstRateId                   String?
+    hsnCode                     String?
+    supplierId                  String?
+    inquiryToSupplierDate       DateTime? @db.Timestamptz()
+    supplierCurrencyId          String?
+    supplierPrice               Float?
+    supplierOfferDate           DateTime? @db.Timestamptz()
+    estimatedDeliveryDays       Int?
+    margin                      Float?
+    customerCurrencyId          String?
+    customerPrice               Float?
+    offerSubmissionDate         DateTime? @db.Timestamptz()
+    statusId                    String?
+    resultId                    String?
+    cancelReasonId              String?
+    remarks                     String?
+    shopDrawing                 Boolean?
+    emailForSupplierRemarks     String?
+    emailForCustomerRemarks     String?
+    sapCode                     String?
+
+    customer                       Customer                        @relation("customerInquiries", fields: [customerId], references: [id], onDelete: Cascade)
+    site                           Site?                           @relation("siteInquiries", fields: [siteId], references: [id], onDelete: Cascade)
+    salesUnit                      Unit?                           @relation("salesUnitInquiries", fields: [salesUnitId], references: [id], onDelete: Cascade)
+    purchaseUnit                   Unit?                           @relation("purchaseUnitInquiries", fields: [purchaseUnitId], references: [id], onDelete: Cascade)
+    frontPersonRepresentative      User                            @relation("frontPersonRepresentative", fields: [frontPersonRepresentativeId], references: [id], onDelete: Cascade)
+    supplier                       Supplier?                       @relation("supplierInquiries", fields: [supplierId], references: [id], onDelete: Cascade)
+    status                         InquiryStatus?                  @relation("status", fields: [statusId], references: [id], onDelete: Cascade)
+    result                         InquiryResult?                  @relation("result", fields: [resultId], references: [id], onDelete: Cascade)
+    cancelReason                   InquiryCancelReason?            @relation("cancelReason", fields: [cancelReasonId], references: [id], onDelete: Cascade)
+    gstRate                        GstRate?                        @relation("gstRateInquiries", fields: [gstRateId], references: [id], onDelete: Cascade)
+    attachments                    Attachment[]                    @relation("inquiryAttachments")
+    inquiriesSentToSupplierInquiry InquiriesSentToSupplierInquiry? @relation("inquiriesSentToSupplierInquiry")
+    offerSentToCustomerInquiry     OfferSentToCustomerInquiry?     @relation("offerSentToCustomerInquiry")
+    supplierCurrency               Currency?                       @relation("supplierCurrency", fields: [supplierCurrencyId], references: [id], onDelete: Cascade)
+    customerCurrency               Currency?                       @relation("customerCurrency", fields: [customerCurrencyId], references: [id], onDelete: Cascade)
+
+    createdAt         DateTime           @default(now()) @db.Timestamptz()
+    updatedAt         DateTime           @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt         DateTime?          @db.Timestamptz()
+    createdById       String?
+    createdBy         User?              @relation("createdInquiries", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById       String?
+    updatedBy         User?              @relation("updatedInquiries", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById       String?
+    deletedBy         User?              @relation("deletedInquiries", fields: [deletedById], references: [id], onDelete: Cascade)
+    salesOrderItem    SalesOrderItem?    @relation("inquirySalesOrderItem")
+    purchaseOrderItem PurchaseOrderItem? @relation("inquiryPurchaseOrderItem")
+    image             Attachment?        @relation("inquiryImage")
+
+    @@map("Inquiries")
+}
+
+model InquiriesSentToSupplier {
+    id           String    @id @default(cuid())
+    supplierId   String
+    emailSent    Boolean   @default(false)
+    whatsappSent Boolean   @default(false)
+    lastResendAt DateTime? @db.Timestamptz()
+
+    supplier      Supplier                               @relation("inquiriesSentToSupplierSupplier", fields: [supplierId], references: [id], onDelete: Cascade)
+    inquiries     InquiriesSentToSupplierInquiry[]       @relation("inquiriesSentToSupplier")
+    resendHistory InquiriesSentToSupplierResendHistory[] @relation("inquiriesSentToSupplierResendHistory")
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
+    createdById String?
+    createdBy   User?    @relation("createdInquiriesSentToSupplier", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?    @relation("updatedInquiriesSentToSupplier", fields: [updatedById], references: [id], onDelete: Cascade)
+
+    @@map("InquiriesSentToSupplier")
+}
+
+model InquiriesSentToSupplierInquiry {
+    id                        String @id @default(cuid())
+    inquiriesSentToSupplierId String
+    inquiryId                 String @unique
+
+    inquiriesSentToSupplier InquiriesSentToSupplier @relation("inquiriesSentToSupplier", fields: [inquiriesSentToSupplierId], references: [id], onDelete: Cascade)
+    inquiry                 Inquiry                 @relation("inquiriesSentToSupplierInquiry", fields: [inquiryId], references: [id], onDelete: Cascade)
+
+    @@map("InquiriesSentToSupplierInquiries")
+}
+
+model InquiriesSentToSupplierResendHistory {
+    id                        String  @id @default(cuid())
+    inquiriesSentToSupplierId String
+    emailSent                 Boolean @default(false)
+    whatsappSent              Boolean @default(false)
+
+    inquiriesSentToSupplier InquiriesSentToSupplier @relation("inquiriesSentToSupplierResendHistory", fields: [inquiriesSentToSupplierId], references: [id], onDelete: Cascade)
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    createdById String?
+    createdBy   User?    @relation("createdInquiriesSentToSupplierResendHistory", fields: [createdById], references: [id], onDelete: Cascade)
+
+    @@map("InquiriesSentToSupplierResendHistory")
+}
+
+model OfferSentToCustomer {
+    id              String    @id @default(cuid())
+    customerId      String
+    siteId          String?
+    prNumberAndName String?
+    emailSent       Boolean   @default(false)
+    whatsappSent    Boolean   @default(false)
+    lastResendAt    DateTime? @db.Timestamptz()
+
+    customer      Customer                           @relation("offerSentToCustomerCustomer", fields: [customerId], references: [id], onDelete: Cascade)
+    site          Site?                              @relation("offerSentToCustomerSite", fields: [siteId], references: [id], onDelete: Cascade)
+    inquiries     OfferSentToCustomerInquiry[]       @relation("offerSentToCustomer")
+    resendHistory OfferSentToCustomerResendHistory[] @relation("offerSentToCustomerResendHistory")
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
+    createdById String?
+    createdBy   User?    @relation("createdOfferSentToCustomer", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?    @relation("updatedOfferSentToCustomer", fields: [updatedById], references: [id], onDelete: Cascade)
+
+    @@map("InquiriesSentToCustomer")
+}
+
+model OfferSentToCustomerInquiry {
+    id                        String @id @default(cuid())
+    inquiriesSentToCustomerId String
+    inquiryId                 String @unique
+
+    offerSentToCustomer OfferSentToCustomer @relation("offerSentToCustomer", fields: [inquiriesSentToCustomerId], references: [id], onDelete: Cascade)
+    inquiry             Inquiry             @relation("offerSentToCustomerInquiry", fields: [inquiryId], references: [id], onDelete: Cascade)
+
+    @@map("InquiriesSentToCustomerInquiries")
+}
+
+model OfferSentToCustomerResendHistory {
+    id                        String  @id @default(cuid())
+    inquiriesSentToCustomerId String
+    emailSent                 Boolean @default(false)
+    whatsappSent              Boolean @default(false)
+
+    offerSentToCustomer OfferSentToCustomer @relation("offerSentToCustomerResendHistory", fields: [inquiriesSentToCustomerId], references: [id], onDelete: Cascade)
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    createdById String?
+    createdBy   User?    @relation("createdOfferSentToCustomerResendHistory", fields: [createdById], references: [id], onDelete: Cascade)
+
+    @@map("InquiriesSentToCustomerResendHistory")
+}
+
+model Address {
+    id           String  @id @default(cuid())
+    name         String  @unique
+    line1        String?
+    line2        String?
+    personName   String?
+    personMobile String?
+
+    createdAt                    DateTime        @default(now()) @db.Timestamptz()
+    updatedAt                    DateTime        @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt                    DateTime?       @db.Timestamptz()
+    createdById                  String?
+    createdBy                    User?           @relation("createdAddresses", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById                  String?
+    updatedBy                    User?           @relation("updatedAddresses", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById                  String?
+    deletedBy                    User?           @relation("deletedAddresses", fields: [deletedById], references: [id], onDelete: Cascade)
+    purchaseOrderShippingAddress PurchaseOrder[] @relation("purchaseOrderShippingAddress")
+
+    @@map("Addresses")
+}
+
+model Port {
+    id    String  @id @default(cuid())
+    name  String  @unique
+    line1 String?
+    line2 String?
+
+    createdAt         DateTime   @default(now()) @db.Timestamptz()
+    updatedAt         DateTime   @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt         DateTime?  @db.Timestamptz()
+    createdById       String?
+    createdBy         User?      @relation("createdPorts", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById       String?
+    updatedBy         User?      @relation("updatedPorts", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById       String?
+    deletedBy         User?      @relation("deletedPorts", fields: [deletedById], references: [id], onDelete: Cascade)
+    invoicesloading   Invoice[]  @relation("invoiceLoadingPort")
+    invoicesdischage  Invoice[]  @relation("invoiceDischagePort")
+    invoices2loading  Invoice2[] @relation("invoice2LoadingPort")
+    invoices2dischage Invoice2[] @relation("invoice2DischargePort")
+
+    @@map("Ports")
+}
+
+enum OrderStage {
+    Pending
+    Open
+    Fulfilment
+    Invoice
+    Closed
+    Cancelled
+}
+
+model SalesOrder {
+    id                   String     @id @default(cuid())
+    counter              Int        @unique @default(autoincrement())
+    id2                  String     @unique
+    approved             Boolean    @default(false)
+    date                 DateTime   @default(now()) @db.Timestamptz()
+    customerId           String
+    siteId               String?
+    prNumberAndName      String?
+    representativeUserId String
+    referenceId          String?
+    totalAmount          Float
+    stage                OrderStage @default(Pending)
+    currencyId           String
+
+    items              SalesOrderItem[]    @relation("salesOrderItems")
+    expenses           SalesOrderExpense[] @relation("salesOrderExpenses")
+    customer           Customer            @relation("customerSalesOrders", fields: [customerId], references: [id], onDelete: Cascade)
+    site               Site?               @relation("siteSalesOrders", fields: [siteId], references: [id], onDelete: Cascade)
+    representativeUser User                @relation("representativeUserSalesOrders", fields: [representativeUserId], references: [id], onDelete: Cascade)
+    purchaseOrders     PurchaseOrder[]     @relation("salesOrderPurchaseOrders")
+    currency           Currency            @relation("salesOrderCurrency", fields: [currencyId], references: [id], onDelete: Cascade)
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
+    createdById String?
+    createdBy   User?    @relation("createdSalesOrders", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String?
+    updatedBy   User?    @relation("updatedSalesOrders", fields: [updatedById], references: [id], onDelete: Cascade)
+
+    @@map("SalesOrders")
+}
+
+model SalesOrderItem {
+    id           String  @id @default(cuid())
+    counter      Int     @unique @default(autoincrement())
+    salesOrderId String
+    inquiryId    String? @unique
+    itemId       String  @unique
+    description  String
+    size         String?
+    unitId       String
+    price        Float
+    quantity     Float
+
+    salesOrder         SalesOrder          @relation("salesOrderItems", fields: [salesOrderId], references: [id], onDelete: Cascade)
+    inquiry            Inquiry?            @relation("inquirySalesOrderItem", fields: [inquiryId], references: [id], onDelete: Cascade)
+    unit               Unit                @relation("unitSalesOrderItem", fields: [unitId], references: [id], onDelete: Cascade)
+    purchaseOrderItems PurchaseOrderItem[] @relation("salesOrderPurchaseOrderItem")
+    invoiceItems       InvoiceItem[]       @relation("salesOrderInvoiceItem")
+    invoice2Items      Invoice2Item[]      @relation("salesOrderInvoice2Item")
+
+    createdAt DateTime @default(now()) @db.Timestamptz()
+    updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+    @@map("SalesOrderItems")
+}
+
+model SalesOrderExpense {
+    id                    String    @id @default(cuid())
+    salesOrderId          String
+    description           String
+    price                 Float
+    remarks               String?
+    customId              String?
+    supplierInvoiceNumber String?
+    exportInvoiceNumber   String?
+    deletedAt             DateTime? @db.Timestamptz()
+    voucherDate           DateTime? @default(now()) @db.Timestamptz()
+    poInvoiceDate         DateTime? @default(now()) @db.Timestamptz()
+    exportInvoiceDate     DateTime? @default(now()) @db.Timestamptz()
+
+    createdById String?
+    createdBy   User?   @relation("createdSalesOrderExpenses", fields: [createdById], references: [id], onDelete: Cascade)
+
+    deletedById String?
+    deletedBy   User?   @relation("deletedSalesOrderExpenses", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    updatedById String?
+    updatedBy   User?   @relation("updatedSalesOrderExpenses", fields: [updatedById], references: [id], onDelete: Cascade)
+
+    salesOrder SalesOrder @relation("salesOrderExpenses", fields: [salesOrderId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @db.Timestamptz()
+    updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+    @@map("SalesOrderExpenses")
+}
+
+enum InvoiceType {
+    lut
+    gst
+}
+
+model Invoice {
+    id                String      @id @default(cuid())
+    counter           Int         @unique @default(autoincrement())
+    id2               String      @unique
+    id3               String?     @unique
+    customerId        String
+    customDate        DateTime?   @default(now()) @db.Timestamptz()
+    date              DateTime    @default(now()) @db.Timestamptz()
+    type              InvoiceType
+    total             Float
+    loadingPortId     String
+    dischargePortId   String
+    remarks           String?
+    amountInWords     String?
+    totalPackages     String?
+    totalNetWeight    String?
+    totalGrossWeight  String?
+    totalCbm          String?
+    truckNumber       String?
+    cntrNumber        String?
+    lineSealNumber    String?
+    rfidSealNumber    String?
+    cntrSize          String?
+    currencyId        String
+    conversionRate    Float
+    exporterDetailsId String
+    notifyPartyId     String
+    notifyPartyId2    String?
+    comments          String?
+    lutId             String
+    iecCodeId         String
+
+    customer        Customer        @relation("customerInvoices", fields: [customerId], references: [id], onDelete: Cascade)
+    items           InvoiceItem[]   @relation("invoiceItems")
+    loadingPort     Port            @relation("invoiceLoadingPort", fields: [loadingPortId], references: [id], onDelete: Cascade)
+    dischagePort    Port            @relation("invoiceDischagePort", fields: [dischargePortId], references: [id], onDelete: Cascade)
+    exporterDetails ExporterDetails @relation("invoiceExporterDetails", fields: [exporterDetailsId], references: [id], onDelete: Cascade)
+    notifyParty     NotifyParty     @relation("invoiceNotifyParty", fields: [notifyPartyId], references: [id], onDelete: Cascade)
+    notifyParty2    NotifyParty?    @relation("invoiceNotifyParty2", fields: [notifyPartyId2], references: [id], onDelete: Cascade)
+    currency        Currency        @relation("invoiceCurrency", fields: [currencyId], references: [id], onDelete: Cascade)
+    lut             Lut             @relation("invoiceLUT", fields: [lutId], references: [id], onDelete: Cascade)
+    iecCode         IecCode         @relation("invoiceIecCode", fields: [iecCodeId], references: [id], onDelete: Cascade)
+
+    representativeUserId String?
+    representativeUser   User?    @relation("representativeUserInvoices", fields: [representativeUserId], references: [id], onDelete: Cascade)
+    createdById          String
+    createdBy            User     @relation("createdInvoices", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById          String
+    updatedBy            User     @relation("updatedInvoices", fields: [updatedById], references: [id], onDelete: Cascade)
+    createdAt            DateTime @default(now()) @db.Timestamptz()
+    updatedAt            DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+    @@map("Invoices")
+}
+
+model InvoiceItem {
+    id                        String  @id @default(cuid())
+    invoiceId                 String
+    salesOrderItemId          String
+    description               String
+    size                      String?
+    quantity                  Float
+    countryOfOriginId         String?
+    packNumber                String?
+    packingNumberAsPerSimpolo String?
+    numberOfPack              String?
+    weight                    String?
+    weightDetails             String?
+    weightOne                 String?
+    weightSecond              String?
+
+    invoice         Invoice          @relation("invoiceItems", fields: [invoiceId], references: [id], onDelete: Cascade)
+    salesOrderItem  SalesOrderItem   @relation("salesOrderInvoiceItem", fields: [salesOrderItemId], references: [id], onDelete: Cascade)
+    countryOfOrigin CountryOfOrigin? @relation("invoiceCountryOfOrigin", fields: [countryOfOriginId], references: [id], onDelete: Cascade)
+
+    @@map("InvoiceItems")
+}
+
+model Invoice2 {
+    id                String      @id @default(cuid())
+    id3               String?     @unique
+    customerId        String
+    customDate        DateTime?   @default(now()) @db.Timestamptz()
+    date              DateTime    @default(now()) @db.Timestamptz()
+    type              InvoiceType
+    total             Float
+    loadingPortId     String
+    dischargePortId   String
+    remarks           String?
+    amountInWords     String?
+    totalPackages     String?
+    totalNetWeight    String?
+    totalGrossWeight  String?
+    totalCbm          String?
+    truckNumber       String?
+    cntrNumber        String?
+    lineSealNumber    String?
+    rfidSealNumber    String?
+    cntrSize          String?
+    currencyId        String
+    conversionRate    Float
+    exporterDetailsId String
+    notifyPartyId     String
+    notifyPartyId2    String?
+    lutId             String
+    iecCodeId         String
+    comments          String?
+
+    customer        Customer        @relation("customerInvoices2", fields: [customerId], references: [id], onDelete: Cascade)
+    items           Invoice2Item[]  @relation("invoice2Items")
+    loadingPort     Port            @relation("invoice2LoadingPort", fields: [loadingPortId], references: [id], onDelete: Cascade)
+    dischagePort    Port            @relation("invoice2DischargePort", fields: [dischargePortId], references: [id], onDelete: Cascade)
+    exporterDetails ExporterDetails @relation("invoice2ExporterDetails", fields: [exporterDetailsId], references: [id], onDelete: Cascade)
+    notifyParty     NotifyParty     @relation("invoice2NotifyParty", fields: [notifyPartyId], references: [id], onDelete: Cascade)
+    notifyParty2    NotifyParty?    @relation("invoice2NotifyParty2", fields: [notifyPartyId2], references: [id], onDelete: Cascade)
+    lut             Lut             @relation("invoice2LUT", fields: [lutId], references: [id], onDelete: Cascade)
+    iecCode         IecCode         @relation("invoice2IecCode", fields: [iecCodeId], references: [id], onDelete: Cascade)
+    currency        Currency        @relation("invoice2Currency", fields: [currencyId], references: [id], onDelete: Cascade)
+
+    representativeUserId String?
+    representativeUser   User?    @relation("representativeUserInvoices2", fields: [representativeUserId], references: [id], onDelete: Cascade)
+    createdById          String
+    createdBy            User     @relation("createdInvoices2", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById          String
+    updatedBy            User     @relation("updatedInvoices2", fields: [updatedById], references: [id], onDelete: Cascade)
+    createdAt            DateTime @default(now()) @db.Timestamptz()
+    updatedAt            DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+    @@map("Invoices2")
+}
+
+model Invoice2Item {
+    id                        String  @id @default(cuid())
+    invoice2Id                String
+    salesOrderItemId          String
+    description               String
+    size                      String?
+    quantity                  Float
+    countryOfOriginId         String?
+    packNumber                String?
+    packingNumberAsPerSimpolo String?
+    numberOfPack              String?
+    weight                    String?
+    weightDetails             String?
+    weightOne                 String?
+    weightSecond              String?
+
+    invoice         Invoice2         @relation("invoice2Items", fields: [invoice2Id], references: [id], onDelete: Cascade)
+    salesOrderItem  SalesOrderItem   @relation("salesOrderInvoice2Item", fields: [salesOrderItemId], references: [id], onDelete: Cascade)
+    countryOfOrigin CountryOfOrigin? @relation("invoice2CountryOfOrigin", fields: [countryOfOriginId], references: [id], onDelete: Cascade)
+
+    @@map("Invoice2Items")
+}
+
+model PurchaseOrder {
+    id                   String     @id @default(cuid())
+    counter              Int        @unique @default(autoincrement())
+    id2                  String     @unique
+    approved             Boolean    @default(false)
+    date                 DateTime   @default(now()) @db.Timestamptz()
+    supplierId           String
+    representativeUserId String
+    referenceId          String?
+    totalAmount          Float
+    paymentTermId        String
+    salesOrderId         String?
+    stage                OrderStage @default(Pending)
+    shippingAddressId    String?
+    comments             String?
+    isEmailSent          Boolean    @default(false)
+    currencyId           String
+
+    items              PurchaseOrderItem[]         @relation("purchaseOrderItems")
+    expenses           PurchaseOrderExpense[]      @relation("purchaseOrderExpenses")
+    supplier           Supplier                    @relation("supplierPurchaseOrders", fields: [supplierId], references: [id], onDelete: Cascade)
+    representativeUser User                        @relation("representativeUserPurchaseOrders", fields: [representativeUserId], references: [id], onDelete: Cascade)
+    paymentTerm        PaymentTerm                 @relation("paymentTermPurchaseOrders", fields: [paymentTermId], references: [id], onDelete: Cascade)
+    salesOrder         SalesOrder?                 @relation("salesOrderPurchaseOrders", fields: [salesOrderId], references: [id], onDelete: Cascade)
+    shippingAddress    Address?                    @relation("purchaseOrderShippingAddress", fields: [shippingAddressId], references: [id], onDelete: Cascade)
+    emailHistory       PurchaseOrderEmailHistory[] @relation("purchaseOrderEmailHistory")
+    currency           Currency                    @relation("purchaseOrderCurrency", fields: [currencyId], references: [id], onDelete: Cascade)
+
+    createdAt       DateTime                 @default(now()) @db.Timestamptz()
+    updatedAt       DateTime                 @default(now()) @updatedAt @db.Timestamptz()
+    createdById     String?
+    createdBy       User?                    @relation("createdPurchaseOrders", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById     String?
+    updatedBy       User?                    @relation("updatedPurchaseOrders", fields: [updatedById], references: [id], onDelete: Cascade)
+    paymentRequests SupplierPaymentRequest[] @relation("supplierPaymentRequests")
+    paymentRequest  PaymentRequest[]         @relation("paymentRequests")
+
+    @@map("PurchaseOrders")
+}
+
+model PurchaseOrderItem {
+    id                    String    @id @default(cuid())
+    counter               Int       @unique @default(autoincrement())
+    purchaseOrderId       String
+    inquiryId             String?   @unique
+    itemId                String    @unique
+    sapCode               String?
+    description           String
+    size                  String?
+    unitId                String
+    price                 Float
+    quantity              Float
+    gstRateId             String?
+    hsnCode               String?
+    estimatedDeliveryDate DateTime? @db.Timestamptz()
+    salesOrderItemId      String?
+
+    purchaseOrder  PurchaseOrder   @relation("purchaseOrderItems", fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+    inquiry        Inquiry?        @relation("inquiryPurchaseOrderItem", fields: [inquiryId], references: [id], onDelete: Cascade)
+    unit           Unit            @relation("unitPurchaseOrderItem", fields: [unitId], references: [id], onDelete: Cascade)
+    gstRate        GstRate?        @relation("gstRatePurchaseOrderItem", fields: [gstRateId], references: [id], onDelete: Cascade)
+    salesOrderItem SalesOrderItem? @relation("salesOrderPurchaseOrderItem", fields: [salesOrderItemId], references: [id], onDelete: Cascade)
+    inventoryItem  InventoryItem?  @relation("purchaseOrderItemInventoryItem")
+
+    createdAt DateTime @default(now()) @db.Timestamptz()
+    updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+    @@map("PurchaseOrderItems")
+}
+
+model PurchaseOrderExpense {
+    id                    String    @id @default(cuid())
+    purchaseOrderId       String
+    description           String
+    price                 Float
+    gstRateId             String?
+    remarks               String?
+    customId              String?
+    supplierInvoiceNumber String?
+    exportInvoiceNumber   String?
+    deletedAt             DateTime? @db.Timestamptz()
+    poInvoiceDate         DateTime? @default(now()) @db.Timestamptz()
+    voucherDate           DateTime? @default(now()) @db.Timestamptz()
+    exportInvoiceDate     DateTime? @default(now()) @db.Timestamptz()
+    showInFulfilment      Boolean   @default(true)
+    fulfilmentLogId       String?
+
+    purchaseOrder PurchaseOrder  @relation("purchaseOrderExpenses", fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+    gstRate       GstRate?       @relation("gstRatePurchaseOrderExpense", fields: [gstRateId], references: [id], onDelete: Cascade)
+    fulfilmentLog FulfilmentLog? @relation("fulfilmentLogExpenses", fields: [fulfilmentLogId], references: [id], onDelete: Cascade)
+
+    createdById String?
+    createdBy   User?   @relation("createdPurchaseOrderExpenses", fields: [createdById], references: [id], onDelete: Cascade)
+
+    deletedById String?
+    deletedBy   User?   @relation("deletedPurchaseOrderExpenses", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    updatedById String?
+    updatedBy   User?   @relation("updatedPurchaseOrderExpenses", fields: [updatedById], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @db.Timestamptz()
+    updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+    userId    String?
+
+    @@map("PurchaseOrderExpenses")
+}
+
+model PurchaseOrderEmailHistory {
+    id              String @id @default(cuid())
+    purchaseOrderId String
+
+    purchaseOrder PurchaseOrder @relation("purchaseOrderEmailHistory", fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
+    createdById String
+    createdBy   User     @relation("createdPurchaseOrderEmailHistory", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String
+    updatedBy   User     @relation("updatedPurchaseOrderEmailHistory", fields: [updatedById], references: [id], onDelete: Cascade)
+
+    @@map("PurchaseOrderEmailHistory")
+}
+
+model FulfilmentLog {
+    id              String   @id @default(cuid())
+    gateEntryNumber String   @unique
+    gateEntryDate   DateTime @default(now()) @db.Timestamptz()
+    supplierId      String
+    invoiceId       String
+    invoiceDate     DateTime @default(now()) @db.Timestamptz()
+    location        String
+    remarks         String?
+
+    supplier Supplier               @relation("supplierFulfilmentLogs", fields: [supplierId], references: [id], onDelete: Cascade)
+    items    FulfilmentLogItem[]    @relation("fulfilmentItems")
+    expenses PurchaseOrderExpense[] @relation("fulfilmentLogExpenses")
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
+    createdById String
+    createdBy   User     @relation("createdFulfilmentLogs", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String
+    updatedBy   User     @relation("updatedFulfilmentLogs", fields: [updatedById], references: [id], onDelete: Cascade)
+
+    @@unique([supplierId, invoiceId])
+    @@map("FulfilmentLogs")
+}
+
+model FulfilmentLogItem {
+    id              String @id @default(cuid())
+    fulfilmentLogId String
+    inventoryItemId String
+    quantity        Float
+
+    fulfilmentLog FulfilmentLog @relation("fulfilmentItems", fields: [fulfilmentLogId], references: [id], onDelete: Cascade)
+    inventoryItem InventoryItem @relation("fulfilmentLogItems", fields: [inventoryItemId], references: [id], onDelete: Cascade)
+}
+
+model InventoryItem {
+    id                  String @id @default(cuid())
+    purchaseOrderItemId String @unique
+    quantity            Float
+    quantityGone        Float  @default(0)
+
+    purchaseOrderItem  PurchaseOrderItem   @relation("purchaseOrderItemInventoryItem", fields: [purchaseOrderItemId], references: [id], onDelete: Cascade)
+    fulfilmentLogItems FulfilmentLogItem[] @relation("fulfilmentLogItems")
+
+    createdAt DateTime @default(now()) @db.Timestamptz()
+    updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+    @@map("InventoryItems")
+}
+
+model Team {
+    id   String @id @default(cuid())
+    name String @unique
+
+    users     TeamUser[]
+    taskLists TaskList[]
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
+    createdById String
+    createdBy   User     @relation("createdTeams", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String
+    updatedBy   User     @relation("updatedTeams", fields: [updatedById], references: [id], onDelete: Cascade)
+
+    @@map("Teams")
+}
+
+model TeamUser {
+    id     String @id @default(cuid())
+    teamId String
+    userId String
+
+    team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @db.Timestamptz()
+    updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+    @@unique([teamId, userId])
+    @@map("TeamUsers")
+}
+
+model TaskList {
+    id     String @id @default(cuid())
+    name   String
+    order  Int
+    teamId String
+
+    team  Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+    tasks Task[] @relation("taskList")
+
+    createdAt              DateTime       @default(now()) @db.Timestamptz()
+    updatedAt              DateTime       @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt              DateTime?      @db.Timestamptz()
+    createdById            String
+    createdBy              User           @relation("createdTaskLists", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById            String
+    updatedBy              User           @relation("updatedTaskLists", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById            String?
+    deletedBy              User?          @relation("deletedTaskLists", fields: [deletedById], references: [id], onDelete: Cascade)
+    taskListActivities     TaskActivity[] @relation("taskListActivities")
+    taskListActivitiesMove TaskActivity[] @relation("taskListActivitiesMove")
+
+    @@map("TaskLists")
+}
+
+model Task {
+    id          String    @id @default(cuid())
+    title       String
+    description String?
+    completed   Boolean   @default(false)
+    order       Int
+    taskListId  String
+    startDate   DateTime? @db.Timestamptz()
+    endDate     DateTime? @db.Timestamptz()
+
+    taskList        TaskList           @relation("taskList", fields: [taskListId], references: [id], onDelete: Cascade)
+    assignedTo      TaskAssignedUser[] @relation("taskAssignedUsersTask")
+    taskAttachments Attachment[]       @relation("taskAttachments")
+    taskActivities  TaskActivity[]     @relation("taskActivities")
+    taskCheckLists  TaskCheckList[]    @relation("taskCheckLists")
+
+    createdAt   DateTime  @default(now()) @db.Timestamptz()
+    updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz()
+    deletedAt   DateTime? @db.Timestamptz()
+    createdById String
+    createdBy   User      @relation("createdTasks", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String
+    updatedBy   User      @relation("updatedTasks", fields: [updatedById], references: [id], onDelete: Cascade)
+    deletedById String?
+    deletedBy   User?     @relation("deletedTasks", fields: [deletedById], references: [id], onDelete: Cascade)
+
+    @@map("Tasks")
+}
+
+model TaskCheckList {
+    id     String @id @default(cuid())
+    name   String
+    taskId String
+
+    task               Task                @relation("taskCheckLists", fields: [taskId], references: [id], onDelete: Cascade)
+    taskCheckListItems TaskCheckListItem[] @relation("taskCheckListItems")
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
+    createdById String
+    createdBy   User     @relation("createdTaskCheckLists", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String
+    updatedBy   User     @relation("updatedTaskCheckLists", fields: [updatedById], references: [id], onDelete: Cascade)
+
+    @@map("TaskCheckLists")
+}
+
+model TaskCheckListItem {
+    id              String    @id @default(cuid())
+    title           String
+    isComplete      Boolean   @default(false)
+    taskCheckListId String
+    endDate         DateTime? @db.Timestamptz()
+    order           Int
+
+    taskCheckList TaskCheckList @relation("taskCheckListItems", fields: [taskCheckListId], references: [id], onDelete: Cascade)
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
+    createdById String
+    createdBy   User     @relation("createdTaskCheckListItems", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String
+    updatedBy   User     @relation("updatedTaskCheckListItems", fields: [updatedById], references: [id], onDelete: Cascade)
+
+    @@map("TaskCheckListItems")
+}
+
+model TaskAssignedUser {
+    id     String @id @default(cuid())
+    taskId String
+    userId String
+
+    task Task @relation("taskAssignedUsersTask", fields: [taskId], references: [id], onDelete: Cascade)
+    user User @relation("taskAssignedUsers", fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
+    createdById String
+    createdBy   User     @relation("createdTaskAssignedUsers", fields: [createdById], references: [id], onDelete: Cascade)
+
+    @@map("TaskAssignedUsers")
+}
+
+model TaskActivity {
+    id                String         @id @default(cuid())
+    taskId            String?
+    taskListId        String?
+    movedToTaskListId String?
+    action            TaskActionType
+    description       String?
+
+    task            Task?     @relation("taskActivities", fields: [taskId], references: [id], onDelete: Cascade)
+    taskList        TaskList? @relation("taskListActivities", fields: [taskListId], references: [id], onDelete: Cascade)
+    movedToTaskList TaskList? @relation("taskListActivitiesMove", fields: [movedToTaskListId], references: [id], onDelete: Cascade)
+
+    createdAt        DateTime @default(now()) @db.Timestamptz()
+    createdById      String
+    createdBy        User     @relation("createdTaskActivities", fields: [createdById], references: [id], onDelete: Cascade)
+    additionalUserId String?
+    additionalUser   User?    @relation("additionalUserTaskActivities", fields: [additionalUserId], references: [id], onDelete: Cascade)
+
+    @@map("TaskActivities")
+}
+
+enum TaskActionType {
+    Task_Assigned
+    Task_Completed
+    Task_Unassigned
+    Task_Moved
+    Task_Attachment_Added
+    Task_Attachment_Deleted
+    Task_Deleted
+    Task_Updated
+    Task_Created
+    Task_List_Created
+    Task_List_Updated
+    Task_List_Deleted
+}
+
+enum WhatsAppMessageDirection {
+    incoming
+    outgoing
+}
+
+enum WhatsAppMessageStatus {
+    sent
+    delivered
+    read
+}
+
+enum WhatsAppMessageType {
+    audio
+    video
+    document
+    image
+    text
+    location
+    template
+}
+
+model WhatsAppMessage {
+    id                 String                   @id @default(cuid())
+    messageId          String                   @unique
+    contactPhoneNumber String
+    direction          WhatsAppMessageDirection
+    type               WhatsAppMessageType
+    status             WhatsAppMessageStatus?
+    sentAt             DateTime?                @db.Timestamptz()
+    deliveredAt        DateTime?                @db.Timestamptz()
+    readAt             DateTime?                @db.Timestamptz()
+    latitude           Float?
+    longitude          Float?
+    address            String?
+    locationName       String?
+    text               String?
+    templateName       String?
+    mediaId            String?
+    mediaUrl           String?
+    mediaFilename      String?
+    reaction           String?
+    seen               Boolean?
+
+    whatsAppMessageAttachment Attachment? @relation("whatsAppMessageAttachment")
+
+    createdAt DateTime @default(now()) @db.Timestamptz()
+    updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+    @@map("WhatsAppMessages")
+}
+
+model SupplierPaymentRequest {
+    id              String   @id @default(cuid())
+    supplierId      String
+    amount          Float
+    remarks         String?
+    purchaseOrderId String
+    approved        Boolean  @default(false)
+    completed       Boolean  @default(false)
+    date            DateTime @default(now()) @db.Timestamptz()
+
+    supplier      Supplier      @relation("supplierPaymentRequests", fields: [supplierId], references: [id], onDelete: Cascade)
+    purchaseOrder PurchaseOrder @relation("supplierPaymentRequests", fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @db.Timestamptz()
+    updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+    @@map("VendorPaymentRequests")
+}
+
+enum PaymentRequestStatus {
+    Pending
+    Approved
+    Paid
+}
+
+model PaymentRequest {
+    id              String               @id @default(cuid())
+    id2             Int                  @default(autoincrement())
+    amount          Float
+    remarks         String?
+    purchaseOrderId String
+    status          PaymentRequestStatus @default(Pending)
+
+    purchaseOrder PurchaseOrder @relation("paymentRequests", fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
+    createdById String
+    createdBy   User     @relation("createdPaymentRequests", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String
+    updatedBy   User     @relation("updatedPaymentRequests", fields: [updatedById], references: [id], onDelete: Cascade)
+}

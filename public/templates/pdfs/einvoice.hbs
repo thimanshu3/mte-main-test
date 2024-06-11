@@ -1,0 +1,621 @@
+<html>
+
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <script src='https://cdn.tailwindcss.com'></script>
+
+    <style>
+      * { font-size: 11px; line-height: 15px; }
+    </style>
+  </head>
+
+  <body>
+    <div class='w-full border border-black' style='width: 210mm'>
+      <div class='flex w-full justify-center border-r border-t border-black'>
+        <h4>EXPORT INVOICE</h4>
+      </div>
+
+      <div class='flex w-full justify-center border-r border-t border-black'>
+        <h4>SUPPLY MEANT FOR EXPORT UNDER {{invoiceType}}</h4>
+      </div>
+
+      {{#if isLUT}}
+        <div
+          class='mx-auto grid grid-cols-5 justify-center border-r border-t border-black'
+        >
+          <div class='col-span-2 border-r border-black'>
+            <div class='w-full border-b border-black'>
+              <h6 class='font-bold underline'>EXPORTER</h6>
+              <p>{{exporterDetails}}</p>
+              <p>{{exporterDetailsAddress}}</p>
+            </div>
+            <div>
+              <div>
+                <h6 class='border-b border-black font-bold'>
+                  CONSIGNEE
+                </h6>
+              </div>
+              <div class=''>
+                <p>{{customerAddress}}</p>
+              </div>
+            </div>
+          </div>
+          <div class='col-span-2 border-r border-black'>
+            <div class='border-b border-black'>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>INVOICE NO</td>
+                    <td>&nbsp;&nbsp;&nbsp;:</td>
+                    <td>{{id}}</td>
+                  </tr>
+                  <tr>
+                    <td>INVOICE DATE</td>
+                    <td>&nbsp;&nbsp;&nbsp;:</td>
+                    <td class='px-1'>{{date}}</td>
+                  </tr>
+                  <tr>
+                    <td>LUT NO</td>
+                    <td>&nbsp;&nbsp;&nbsp;:</td>
+                    <td>{{LUT}}</td>
+                  </tr>
+                  <tr>
+                    <td>IEC CODE</td>
+                    <td>&nbsp;&nbsp;&nbsp;:</td>
+                    <td>{{IECcode}}</td>
+                  </tr>
+                  <tr>
+                    <td>GSTIN</td>
+                    <td>&nbsp;&nbsp;&nbsp;:</td>
+                    <td>08AICPM6265B1ZF</td>
+                  </tr>
+                  <tr>
+                    <td>{{currency}} @</td>
+                    <td>&nbsp;&nbsp;&nbsp;:</td>
+                    <td>{{conversionRate}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class='border-black'>
+              <div class='border-b border-black'>
+                <h6 class='font-bold'>NOTIFY PARTY</h6>
+              </div>
+              <div class=''>
+                {{#if notifyName2}}
+                  <h6>{{notifyName1}}</h6>
+                  <p>{{notifyAddress1}}</p>
+                  <h6>{{notifyName2}}</h6>
+                  <p>{{notifyAddress2}}</p>
+                {{else}}
+                  <h6>{{notifyName1}}</h6>
+                  <p>{{notifyAddress1}}</p>
+                {{/if}}
+              </div>
+            </div>
+          </div>
+          <div class='col-span-1 p-5'>
+            <img
+              src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQI7kDgFnJWNEZxDtPke2nwgkpDSvdq64LD4A'
+              alt=''
+            />
+          </div>
+        </div>
+        <div class='grid grid-cols-5 border-r border-t border-black'>
+          <div class='col-span-2 border-r border-black'>
+            <div class='border-b border-black'>
+              <h6 class='border-b border-black font-bold'>PORT DETAILS</h6>
+              <p>
+                PORT OF LOADING :
+                {{portOfLoading}}
+                <br />
+                PORT OF DISCHARGE :
+                {{portOfDischarge}}
+              </p>
+            </div>
+            <div>
+              <p>
+                DELIVERY : 30 DAYS AFTER RECEIVING 100%
+                <br />
+                PAYMENT : 100% ADVANCE
+              </p>
+            </div>
+          </div>
+          <div class='col-span-2 border-r border-black'>
+            <div class='border-black'>
+              <h6 class='border-b border-black font-bold'>BANK DETAILS</h6>
+              <table>
+                <tbody>
+                  <tr>
+                    <td style='white-space: nowrap;'>BANK DETAILS</td>
+                    <td>:</td>
+                    <td style='white-space: nowrap;'>J P MORGAN CHASE BANK, NEW
+                      YORK</td>
+                  </tr>
+                  <tr>
+                    <td>SWIFT</td>
+                    <td>:</td>
+                    <td>CHASUS33XXX</td>
+                  </tr>
+                  <tr>
+                    <td style='white-space: nowrap;'>FEDWIRE ROUTING NO.</td>
+                    <td>:</td>
+                    <td>021000021</td>
+                  </tr>
+                  <tr>
+                    <td>CREDIT TO</td>
+                    <td>:</td>
+                    <td>ICICI BANK, UDAIPUR</td>
+                  </tr>
+                  <tr>
+                    <td>SWIFT</td>
+                    <td>:</td>
+                    <td>ICICINBBCTS</td>
+                  </tr>
+                  <tr>
+                    <td>A/C NAME</td>
+                    <td>:</td>
+                    <td>MEWAR TRADERS & ENGINEERS</td>
+                  </tr>
+                  <tr>
+                    <td>A/C NO.</td>
+                    <td>:</td>
+                    <td>430405500101</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class='col-span-1'></div>
+        </div>
+
+        <div class='grid-cols-24 grid w-full flex-col border-r border-black'>
+          <table style='width: 210mm; table-layout: fixed;'>
+            <thead>
+              <tr>
+                <th class='border border-black' style='width: 7%'>S.NO</th>
+                <th class='border border-black' style='width: 20%'>DESCRIPTION
+                  OF GOODS</th>
+                <th class='border border-black' style='width: 6%'>QTY</th>
+                <th class='border border-black' style='width: 6%'>UOM</th>
+                <th class='border border-black' style='width: 10%'>
+                  UNIT PRICE
+                  <br />
+                  ({{currency}})
+                </th>
+                <th class='border border-black' style='width: 10%'>
+                  TOTAL
+                  <br />
+                  ({{currency}})
+                </th>
+                <th class='border border-black' style='width: 12%'>HSN CODE</th>
+                <th class='border border-black' style='width: 12%'>TOTAL (INR)</th>
+                <th class='border border-black' style='width: 12%;'>SUPP INV NO</th>
+                <th class='border border-black' style='width: 10%; '>GSTN NO</th>
+                <th class='border border-black' style='width: 10%'>DATE</th>
+                <th class='border border-black' style='width: 12%'>COUNTRY OF
+                  ORIGIN</th>
+                {{!-- <th class='border border-black' style='width: 9%'>PO REF</th> --}}
+              </tr>
+            </thead>
+            <tbody>
+              {{#each items}}
+                <tr>
+                  <td class='border border-black'>{{i}}</td>
+                  <td
+                    class='border border-black'
+                    style='white-space: normal; word-wrap: break-word;'
+                  >{{description}}</td>
+                  <td
+                    class='border border-black text-center'
+                    style='white-space: normal; word-wrap: break-word;'
+                  >{{quantity}}</td>
+                  <td class='border border-black text-center'>{{uom}}</td>
+                  <td class='border border-black text-right'>{{price}}</td>
+                  <td class='border border-black text-right'>{{total}}</td>
+                  <td class='border border-black'>{{hsnCode}}</td>
+                  <td class='border border-black text-right'>{{InrTotal}}</td>
+                  <td
+                    class='border border-black text-right'
+                    style='white-space: normal; word-wrap: break-word;'
+                  >{{supplierInvoiceId}}</td>
+                  <td
+                    class='border border-black text-right'
+                    style='white-space: normal; word-wrap: break-word;'
+                  >{{supplierGst}}</td>
+                  <td
+                    class='border border-black text-right'
+                  >{{supplierInvoiceDate}}</td>
+                  <td
+                    class='border border-black text-center'
+                  >{{countryOfOrigin}}</td>
+                  {{!-- <td
+                    class='border border-black'
+                    style='white-space: normal; word-wrap: break-word;'
+                  >{{POrefId}}</td> --}}
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+
+        <div class='grid grid-cols-9'>
+          <table class='col-start-2 col-end-5' style='margin-right: 7px;'>
+            <thead>
+              <tr>
+                <th class='border-l border-black'></th>
+                <th class='border-l border-black'>TOTAL</th>
+                <td
+                  class='border-l border-r border-black text-right'
+                >{{USDTotal}}</td>
+              </tr>
+              <tr>
+                <th
+                  class='border-l border-r border-black px-5'
+                >{{currency}}</th>
+                <th class='border border-black'>ROUND OFF</th>
+                <td
+                  class='border border-black text-right'
+                >{{USDRoundOffTotal}}</td>
+              </tr>
+              <tr>
+                <th class='border-b border-l border-black'></th>
+                <th class='border border-black'>TOTAL CIF</th>
+                <td class='border border-black text-right'>{{totalCIF}}</td>
+              </tr>
+            </thead>
+          </table>
+
+          <table class='col-start-5 col-end-8'>
+            <thead>
+              <tr>
+                <th class='border-l border-black'></th>
+                <th class='border-l border-black'>TOTAL</th>
+                <td class='border-l border-r border-black'>{{INRTotal}}</td>
+              </tr>
+              <tr>
+                <th class='border-l border-r border-black px-3'>INR</th>
+                <th class='border border-black'>ROUND OFF</th>
+                <td class='border border-black'>{{INRRoundOffTotal}}</td>
+              </tr>
+              <tr>
+                <th class='border-b border-l border-black'></th>
+                <th class='border border-black'>TOTAL CIF</th>
+                <td class='border border-black'>{{INRTotal2}}</td>
+              </tr>
+
+            </thead>
+          </table>
+
+        </div>
+
+        <div class='mt-3 border-b border-t border-black'>
+          <h3 class='font-bold'>Amount In Words : {{amountInWords}}</h3>
+        </div>
+        <div class='border-b border-black'>
+          <h3 class='font-bold'>NOTE : {{reMarks}}</h3>
+        </div>
+        <div class='flex w-full flex-row border-b border-black'>
+          <div class='flex flex-col border-r border-black py-2'>
+            <h3 class='font-bold underline'>DECLARATION</h3>
+            <p>
+              1.We declare that this invoice shows the actual price of the goods
+              described and that all particulars are true and correct.
+            </p>
+            <p>2.We intend to claim benefits under the RoDTEP/RoSCTL Scheme</p>
+            <p>3.We intend to claim Drawback.</p>
+            <p>
+              4.We are abide by the provisional of FEMA Act, regarding
+              realisation.
+            </p>
+          </div>
+          <div class='flex flex-col border-black px-4 py-2' style='width: 40%;'>
+            <p>
+              FOR: MEWAR TRADERS &amp; ENGINEERS
+
+              <br />
+              <br />
+              <br />
+            </p>
+            <p class='font-bold'>Authorized Signatory</p>
+          </div>
+        </div>
+      {{else}}
+        <div
+          class='fmx-auto grid grid-cols-5 justify-center border-r border-t border-black'
+        >
+          <div class='col-span-2 border-r border-black'>
+            <div class='w-full border-b border-black'>
+              <h6 class='font-bold underline'>EXPORTER</h6>
+              <p>{{exporterDetails}}</p>
+              <p>{{exporterDetailsAddress}}</p>
+            </div>
+            <div>
+              <div>
+                <h6 class='border-b border-black font-bold'>
+                  CONSIGNEE
+                </h6>
+              </div>
+              <div class=''>
+                <p>{{customerAddress}}</p>
+              </div>
+            </div>
+          </div>
+          <div class='col-span-2 border-r border-black'>
+            <div class='border-b border-black'>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>INVOICE NO</td>
+                    <td>&nbsp;&nbsp;&nbsp;:</td>
+                    <td>{{id}}</td>
+                  </tr>
+                  <tr>
+                    <td>INVOICE DATE</td>
+                    <td>&nbsp;&nbsp;&nbsp;:</td>
+                    <td>{{date}}</td>
+                  </tr>
+                  <tr>
+                    <td>LUT NO</td>
+                    <td>&nbsp;&nbsp;&nbsp;:</td>
+                    <td>{{LUT}}</td>
+                  </tr>
+                  <tr>
+                    <td>IEC CODE</td>
+                    <td>&nbsp;&nbsp;&nbsp;:</td>
+                    <td>{{IECcode}}</td>
+                  </tr>
+                  <tr>
+                    <td>GSTIN</td>
+                    <td>&nbsp;&nbsp;&nbsp;:</td>
+                    <td>08AICPM6265B1ZF</td>
+                  </tr>
+                  <tr>
+                    <td>{{currency}} @</td>
+                    <td>&nbsp;&nbsp;&nbsp;:</td>
+                    <td>{{conversionRate}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class='border-black'>
+              <div class='border-b border-black'>
+                <h6 class='font-bold'>NOTIFY PARTY</h6>
+              </div>
+              <div class=''>
+                {{#if notifyName2}}
+                  <h6>{{notifyName1}}</h6>
+                  <p>{{notifyAddress1}}</p>
+                  <h6>{{notifyName2}}</h6>
+                  <p>{{notifyAddress2}}</p>
+                {{else}}
+                  <h6>{{notifyName1}}</h6>
+                  <p>{{notifyAddress1}}</p>
+                {{/if}}
+              </div>
+            </div>
+          </div>
+          <div class='col-span-1 p-5'>
+            <img
+              src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQI7kDgFnJWNEZxDtPke2nwgkpDSvdq64LD4A'
+              alt=''
+            />
+          </div>
+        </div>
+
+        <div class='grid grid-cols-5 border-r border-t border-black'>
+          <div class='col-span-2 border-r border-black'>
+            <div class='border-b border-black'>
+              <h6 class='border-b border-black font-bold'>PORT DETAILS</h6>
+              <p>
+                PORT OF LOADING :
+                {{portOfLoading}}
+                <br />
+                PORT OF DISCHARGE :
+                {{portOfDischarge}}
+              </p>
+            </div>
+            <div>
+              <p>
+                DELIVERY : 30 DAYS AFTER RECEIVING 100%
+                <br />
+                PAYMENT : 100% ADVANCE
+              </p>
+            </div>
+          </div>
+          <div class='col-span-2 border-r border-black'>
+            <div class='border-black'>
+              <h6 class='border-b border-black font-bold'>BANK DETAILS</h6>
+              <table>
+                <tbody>
+                  <tr>
+                    <td style='white-space: nowrap;'>BANK DETAILS</td>
+                    <td>:</td>
+                    <td style='white-space: nowrap;'>J P MORGAN CHASE BANK, NEW
+                      YORK</td>
+                  </tr>
+                  <tr>
+                    <td>SWIFT</td>
+                    <td>:</td>
+                    <td>CHASUS33XXX</td>
+                  </tr>
+                  <tr>
+                    <td style='white-space: nowrap;'>FEDWIRE ROUTING NO.</td>
+                    <td>:</td>
+                    <td>021000021</td>
+                  </tr>
+                  <tr>
+                    <td>CREDIT TO</td>
+                    <td>:</td>
+                    <td>ICICI BANK, UDAIPUR</td>
+                  </tr>
+                  <tr>
+                    <td>SWIFT</td>
+                    <td>:</td>
+                    <td>ICICINBBCTS</td>
+                  </tr>
+                  <tr>
+                    <td>A/C NAME</td>
+                    <td>:</td>
+                    <td>MEWAR TRADERS & ENGINEERS</td>
+                  </tr>
+                  <tr>
+                    <td>A/C NO.</td>
+                    <td>:</td>
+                    <td>430405500101</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class='col-span-1'></div>
+        </div>
+        <div class='grid-cols-24 grid w-full border-r border-black'>
+          <table style='width: 210mm; table-layout: fixed;'>
+            <thead>
+              <tr>
+                <th class='border border-black' style='width: 7%'>S.NO</th>
+                <th class='border border-black' style='width: 20%'>DESCRIPTION
+                  OF GOODS</th>
+                <th class='border border-black' style='width: 6%'>QTY</th>
+                <th class='border border-black' style='width: 6%'>UOM</th>
+                <th class='border border-black' style='width: 10%'>
+                  UNIT PRICE
+                  <br />
+                  ({{currency}})
+                </th>
+                <th class='border border-black' style='width: 12%'>
+                  TOTAL
+                  <br />
+                  ({{currency}})
+                </th>
+                <th class='border border-black' style='width: 12%'>HSN CODE</th>
+                <th class='border border-black' style='width: 12%'>TOTAL (INR)</th>
+                <th class='border border-black' style='width: 10%'>GST RATE</th>
+                <th class='border border-black' style='width: 15%'>TOTAL GST</th>
+                <th class='border border-black' style='width: 12%'>COUNTRY OF
+                  ORIGIN</th>
+                {{!-- <th class='border border-black' style='width: 10%'>PO REF</th> --}}
+              </tr>
+            </thead>
+            <tbody>
+              {{#each items}}
+                <tr>
+                  <td class='border border-black'>{{i}}</td>
+                  <td
+                    class='border border-black'
+                    style='white-space: normal; word-wrap: break-word;'
+                  >{{description}}</td>
+                  <td
+                    class='border border-black text-center'
+                    style='white-space: normal; word-wrap: break-word;'
+                  >{{quantity}}</td>
+                  <td class='border border-black text-center'>{{uom}}</td>
+                  <td class='border border-black text-right'>{{price}}</td>
+                  <td class='border border-black text-right'>{{total}}</td>
+                  <td class='border border-black'>{{hsnCode}}</td>
+                  <td class='border border-black text-right'>{{InrTotal}}</td>
+                  <td class='border border-black text-right'>{{gstRate}}%</td>
+                  <td class='border border-black text-right'>{{gstTotal}}</td>
+                  <td
+                    class='border border-black text-center'
+                  >{{countryOfOrigin}}</td>
+                  {{!-- <td
+                    class='border border-black'
+                    style='white-space: normal; word-wrap: break-word;'
+                  >{{POrefId}}</td> --}}
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+        <div class='grid grid-cols-10'>
+          <table class='col-start-2 col-end-6' style='margin-right: 28px;'>
+            <thead>
+              <tr>
+                <th class='border-l border-black'></th>
+                <th class='border-l border-black'>TOTAL</th>
+                <td
+                  class='border-l border-r border-black text-right'
+                >{{USDTotal}}</td>
+              </tr>
+              <tr>
+                <th
+                  class='border-l border-r border-black px-5'
+                >{{currency}}</th>
+                <th class='border border-black'>ROUND OFF</th>
+                <td
+                  class='border border-black text-right'
+                >{{USDRoundOffTotal}}</td>
+              </tr>
+              <tr>
+                <th class='border-b border-l border-black'></th>
+                <th class='border border-black'>TOTAL CIF</th>
+                <td class='border border-black text-right'>{{totalCIF}}</td>
+              </tr>
+
+            </thead>
+          </table>
+
+          <table class='col-start-6 col-end-9'>
+            <thead>
+              <tr>
+                <th class='border-l border-black'></th>
+                <th class='border-l border-black'>TOTAL</th>
+                <td
+                  class='border-l border-r border-black text-right'
+                >{{INRTotal}}</td>
+              </tr>
+              <tr>
+                <th class='border-l border-r border-black px-3'>INR</th>
+                <th class='border border-black'>ROUND OFF</th>
+                <td
+                  class='border border-black text-right'
+                >{{INRRoundOffTotal}}</td>
+              </tr>
+              <tr>
+                <th class='border-b border-l border-black'></th>
+                <th class='border border-black'>TOTAL CIF</th>
+                <td class='border border-black text-right'>{{INRTotal2}}</td>
+              </tr>
+
+            </thead>
+          </table>
+
+        </div>
+
+        <div class='mt-3 border-b border-t border-black'>
+          <h3 class='font-bold'>Amount In Words : {{amountInWords}}</h3>
+        </div>
+        <div class='border-b border-black'>
+          <h3 class='font-bold'>NOTE : {{reMarks}}</h3>
+        </div>
+        <div class='flex w-full flex-row border-b border-black'>
+          <div class='flex flex-col border-r border-black py-2'>
+            <h3 class='font-bold underline'>DECLARATION</h3>
+            <p>
+              1.We declare that this invoice shows the actual price of the goods
+              described and that all particulars are true and correct.
+            </p>
+            <p>2.We intend to claim benefits under the RoDTEP/RoSCTL Scheme</p>
+            <p>3.We intend to claim Drawback.</p>
+            <p>
+              4.We are abide by the provisional of FEMA Act, regarding
+              realisation.
+            </p>
+          </div>
+          <div class='flex flex-col border-black px-4 py-2' style='width: 40%;'>
+            <p>
+              FOR: MEWAR TRADERS &amp; ENGINEERS
+
+              <br />
+              <br />
+              <br />
+            </p>
+            <p class='font-bold'>Authorized Signatory</p>
+          </div>
+        </div>{{/if}}
+    </div>
+  </body>
+</html>

@@ -1,0 +1,86 @@
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Quotation</title>
+    <script src='https://cdn.tailwindcss.com'></script>
+  </head>
+  <body>
+    <div class='min-h-screen border border-black'>
+      <div class='w-auto border-b border-b-gray-600'>
+        <div>
+          <h1
+            class='text-md border-b border-b-gray-500 py-1 text-center font-bold text-white'
+            style='background-color: #00008b'
+          >
+            MEWAR TRADERS &amp; ENGINEERS
+          </h1>
+          <p class='text-sm'>
+            Plot No. 1, 5, 6 Behind Maruti Suzuki Technoy Motors India Pvt. Ltd.
+            <br />Chitrakoot Nagar, Sukher, Udaipur-313001 (Raj.)
+          </p>
+          <p class='text-sm'>GSTN: 08AICPM6265B1ZF</p>
+          <p class='text-sm'>EMAIL: {{repEmail}}</p>
+          <p class='border-b border-b-gray-500 text-sm'>
+            WEBSITE: www.mteexim.com
+          </p>
+        </div>
+
+        <h1
+          class='text-center text-xl font-semibold text-white'
+          style='background-color: #00008b'
+        >QUOTATION</h1>
+      </div>
+      <div class='grid grid-cols-2 border-b border-b-gray-500'>
+        <div class='flex gap-2'>
+          <h2 class='font-medium'>Customer:</h2>
+          <span>{{supplier}}</span>
+        </div>
+        <div class='flex gap-2'>
+          <h2 class='font-medium'>PR Number &amp; Name:</h2>
+          <span>{{prNumberAndName}}</span>
+        </div>
+        <div class='flex gap-2'>
+          <h2 class='font-medium'>DATE:</h2>
+          <span>{{date}}</span>
+        </div>
+      </div>
+      <table class='w-full table-auto'>
+        <thead>
+          <tr style='background-color: #00008b' class='text-white'>
+            <th class='border border-gray-600'>Sr. No.</th>
+            <th class='border border-gray-600'>Goods Description</th>
+            <th class='border border-gray-600'>Size</th>
+            <th class='border border-gray-600'>Unit</th>
+            <th class='border border-gray-600'>Quantity</th>
+            <th class='border border-gray-600'>Goods Description Supplier</th>
+            <th class='border border-gray-600'>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each items}}
+            <tr class='text-sm'>
+              <td class='border border-gray-600'>{{sr}}</td>
+              <td class='border border-gray-600'>{{salesDescription}}</td>
+              <td class='border border-gray-600 text-xs'>{{size}}</td>
+              <td class='border border-gray-600 text-center'>{{salesUnit}}</td>
+              <td class='border border-gray-600 text-center'>{{quantity}}</td>
+              <td class='border border-gray-600'></td>
+              <td class='border border-gray-600'></td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      <div class='mt-4 p-1'>
+        <p class='text-sm font-semibold'>
+          If you have any question about this inquiry, please contact
+          {{repName}}, Email:
+          {{repEmail}}, Mobile:
+          {{repMobile}}
+        </p>
+        <p class='mt-1 text-center text-sm font-bold'>This is a computer
+          generated Quotation.</p>
+      </div>
+    </div>
+  </body>
+</html>

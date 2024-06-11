@@ -1,0 +1,13 @@
+{
+  "crons": [
+    {
+      "path": "/api/cleanupAttachments",
+      "schedule": "0 0 * * *"
+    }
+  ],
+  "functions": {
+    "src/pages/**/*": {
+      "maxDuration": 60
+    }
+  }
+}

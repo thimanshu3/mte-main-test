@@ -1,0 +1,126 @@
+<html>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <script src='https://cdn.tailwindcss.com'></script>
+  </head>
+
+  <body>
+    <div class='mx-auto border border-black text-base' style='width: 210mm'>
+      <div class='justify-center bg-white font-bold'>
+        <div
+          class='border-b-1 flex flex-col items-center border border-l-0 border-r-0 border-t-0'
+        >
+          <h1 class='mb-2 text-3xl font-bold'>MEWAR TRADERS & ENGINEERS</h1>
+          <h6 class='mb-2 text-sm font-medium'>
+            PLOT NO. : 1, 5, 6, BEHIND MARUTI SUZUKI TECHNOY MOTORS INDIA PVT
+            LTD CHITRAKOOT NAGAR, UDAIPUR - 313001, RAJ.
+          </h6>
+        </div>
+        <div class='mt-2 flex justify-between'>
+          <div class='ml-2 mt-3 flex'>
+            <h3>Voucher No.: </h3>
+            <h3>{{voucherNumber}}</h3>
+          </div>
+           <div class='ml-2 mt-3 flex'>
+            <h3>Invoice No.: </h3>
+            <h3>{{invoiceNumber}}</h3>
+          </div>
+          <div class='mb-2 items-center border border-black'>
+            <h4 class='text-md my-1 px-1 text-center text-black'>
+              PAYMENT VOUCHER
+            </h4>
+          </div>
+          <div class='mr-16 mt-3 flex'>
+            <h3>Date: </h3>
+            <h3>{{voucherDate}}</h3>
+          </div>
+        </div>
+      </div>
+      <div class='grid w-full grid-cols-4 border-black'>
+        <table style='width: 209.4mm; table-layout: fixed'>
+          <thead>
+            <tr>
+              <th
+                class='h-10 border border-black bg-white text-sm text-black'
+                colspan='10'
+              >
+                Particulars
+              </th>
+              <th
+                class='border border-black bg-white text-sm text-black'
+                colspan='6'
+              >
+                Amount (Rs.)
+                <hr class='font-bold' />
+                <table style='width: 100%'>
+                  <thead>
+                    <tr>
+                      <th class='text-sm' colspan='2'>Debit</th>
+                      <th
+                        class='border-r-1 border border-b-0 border-l-0 border-t-0 border-black text-sm'
+                        colspan='1'
+                        style='width: 15%'
+                      >
+                        P
+                      </th>
+                      <th class='text-sm' colspan='2'>Credit</th>
+                      <th colspan='1' class='text-sm'>P</th>
+                    </tr>
+                  </thead>
+                </table>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class='border border-black text-sm'
+                style='white-space: normal; word-wrap: break-word'
+                colspan='10'
+              >
+                {{particulars}}
+              </td>
+              <td class='border border-black text-sm' rowspan='1' colspan='2'>
+                {{debit}}
+              </td>
+              <td class='border border-black' rowspan='1'></td>
+              <td class='border border-black text-sm' rowspan='1' colspan='2'>
+                {{credit}}
+              </td>
+              <td class='border border-black' rowspan='1'></td>
+            </tr>
+            <tr></tr>
+            <tr>
+              <td
+                class='border border-black text-sm'
+                style='white-space: normal; word-wrap: break-word'
+                colspan='10'
+              >
+                Total (in Rs.)
+              </td>
+              <td
+                class='border border-black'
+                rowspan='1'
+                colspan='2'
+              >{{total}}</td>
+              <td class='border border-black' rowspan='1'></td>
+              <td class='border border-black' rowspan='1' colspan='2'></td>
+              <td class='border border-black' rowspan='1'></td>
+            </tr>
+            <tr></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class='mt-5 flex'>
+        <h3>Naration: </h3>
+        <h3>{{remarks}}</h3>
+      </div>
+      <div class='mb-2 mt-5 flex justify-between text-sm'>
+        <h3>Signature of reciver</h3>
+        <h3>Prepared by / Accountant</h3>
+        <h3>Approved by</h3>
+      </div>
+    </div>
+  </body>
+</html>

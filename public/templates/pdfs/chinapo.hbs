@@ -1,0 +1,154 @@
+<html>
+
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <script src='https://cdn.tailwindcss.com'></script>
+  </head>
+
+  <body>
+    <div class='mx-auto border border-black text-base' style='width: 210mm'>
+      <div
+        class='flex w-full justify-center border-r border-t border-black bg-blue-800 font-bold'
+      >
+        <h4 class='my-1 text-xl text-white'>PURCHASE ORDER</h4>
+      </div>
+      <div
+        class='mx-auto grid grid-cols-4 justify-center border-t border-black'
+      >
+        <div class='col-span-2 border-r border-black'>
+          <div class=''>
+            <table>
+              <tbody>
+                <tr>
+                  <td>PURCHASE ORDER NO:</td>
+                  <td>{{id}}</td>
+                </tr>
+                <tr>
+                  <td>IMPORTER :</td>
+                  <td>{{importer}}</td>
+                </tr>
+                <tr>
+                  <td>SUPPLIER:</td>
+                  <td>{{supplierName}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class='col-span-2 border-black'>
+          <div class='ml-1'>
+            <table>
+              <tbody>
+                <tr>
+                  <td>DATE: </td>
+                  <td>{{date}}</td>
+                </tr>
+                <tr>
+                  <td>PO# : </td>
+                  <td>{{ref}}</td>
+                </tr>
+                <tr>
+                  <td>PR# : </td>
+                  <td>{{prNumber}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      {{!-- <div class='grid w-full grid-cols-4 border-black'>
+        <table style='width: 209.4mm; table-layout: fixed;'>
+          <thead>
+            <tr>
+              <th
+                class='border border-black bg-blue-800 text-white'
+                style='width: 50%'
+              >ITEM NAME</th>
+              <th
+                class='border border-black bg-blue-800 text-white'
+                style='width: 50%'
+              >PROJECT NAME</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                class='border border-black'
+                style='white-space: normal; word-wrap: break-word;'
+              >{{''}}</td>
+              <td
+                class='border border-black'
+                style='white-space: normal; word-wrap: break-word;'
+              >{{project}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div> --}}
+      <div class='flex w-full flex-col border-black'>
+        <table style='width: 209.5mm; table-layout: fixed;'>
+          <thead>
+            <tr>
+              <th
+                class='border border-black bg-blue-800 text-white'
+                style='width: 20%'
+              >SR NO.</th>
+              <th
+                class='border border-black bg-blue-800 text-white'
+                style='width: 40%'
+              >DESCRIPTION</th>
+              <th
+                class='border border-black bg-blue-800 text-white'
+                style='width: 20%'
+              >QTY</th>
+              <th
+                class='border border-black bg-blue-800 text-white'
+                style='width: 20%'
+              >UNIT</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each items}}
+              <tr>
+                <td
+                  class='border border-black text-center'
+                  style='white-space: normal; word-wrap: break-word;'
+                >{{i}}</td>
+                <td
+                  class='border border-black'
+                  style='white-space: normal; word-wrap: break-word;'
+                >{{name}}</td>
+                <td class='border border-black text-center'>{{quantity}}</td>
+                <td class='border border-black text-center'>{{price}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+      <div class='mt-1 border-black'>
+        <h3 class='bg-blue-800 text-center font-bold text-white'>Comments or
+          Special Instructions</h3>
+        <div>
+          <table>
+            <tbody>
+              <tr>
+                <td class='font-medium'>NOTES:</td>
+                <td>{{commentsOg}}</td>
+              </tr>
+              <tr>
+                <td class='font-medium'>PAYMENT:</td>
+                <td>As Agreed</td>
+              </tr>
+              <tr>
+                <td class='font-medium'>DELIVERY:</td>
+                <td>As Agreed</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>Material Should Be Of Prime Quality As Per Our Specification.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+
+</html>

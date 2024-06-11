@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* nprogress */
+
+#nprogress {
+  @apply pointer-events-none;
+}
+
+#nprogress .bar {
+  @apply fixed left-0 top-0 z-[1000] h-1 w-full bg-blue-600;
+}
+
+#nprogress .spinner {
+  @apply fixed right-1 top-1 z-[1001] block sm:right-2 sm:top-2;
+}
+
+#nprogress .spinner-icon {
+  @apply box-border h-5 w-5 rounded-full border-2 border-transparent border-l-blue-600 border-t-blue-600;
+  animation: nprogress-spinner 500ms linear infinite;
+}
+
+@keyframes nprogress-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* nprogress end */
+
+/* AntD Editable Table Rows */
+.editable-cell {
+  position: relative;
+}
+
+.editable-cell-value-wrap {
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
+.editable-row:hover .editable-cell-value-wrap {
+  padding: 4px 11px;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+}
+
+/* AntD Editable Table Rows end*/

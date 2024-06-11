@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stickers</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+  {{#each chunks}}
+    <div class="h-screen w-screen">
+      <div class="grid grid-cols-2 gap-6 h-full w-full p-8">
+        {{#each this}}
+          <div
+            {{#if blank}}
+              class="col-span-1 border-2 border-gray-950 flex flex-col font-medium text-sm opacity-0"
+            {{else}}
+              class="col-span-1 border-2 border-gray-950 flex flex-col font-medium text-sm"
+            {{/if}}
+          >
+            <div class="h-[10%] border-b-2 border-gray-800 flex items-center justify-center">
+              <h1 class="font-bold">MTE</h1>
+            </div>
+            <div class="h-[20%] border-b-2 border-gray-800 grid grid-cols-3">
+              <div class="col-span-1 p-1 border-r-2 border-gray-800 flex items-center justify-start">
+                ITEM DESCRIPTION
+              </div>
+              <div class="col-span-2 p-1 flex items-center justify-start text-xs">
+                {{description}}
+              </div>
+            </div>
+            <div class="h-[14%] border-b-2 border-gray-800 grid grid-cols-3">
+              <div class="col-span-1 p-1 border-r-2 border-gray-800 flex items-center justify-start">
+                UNIQ ID NO
+              </div>
+              <div class="col-span-2 p-1 flex items-center justify-center">
+                {{id}}
+              </div>
+            </div>
+            <div class="h-[14%] border-b-2 border-gray-800 grid grid-cols-3 font-bold text-base">
+              <div class="col-span-1 p-1 border-r-2 border-gray-800 flex items-center justify-start">
+                QTY
+              </div>
+              <div class="col-span-2 p-1 flex items-center justify-center">{{q}} ({{uom}})</div>
+            </div>
+            <div class="h-[14%] border-b-2 border-gray-800 grid grid-cols-3">
+              <div class="col-span-1 p-1 border-r-2 border-gray-800 flex items-center justify-start">
+                BOX NO
+              </div>
+              <div class="col-span-2 p-1 flex items-center justify-center">
+                {{of}}
+              </div>
+            </div>
+            <div class="h-[14%] border-b-2 border-gray-800 grid grid-cols-3 font-bold text-base">
+              <div class="col-span-1 p-1 border-r-2 border-gray-800 flex items-center justify-start">
+                PO REF
+              </div>
+              <div class="col-span-2 p-1 flex items-center justify-center text-xs">
+                {{poRef}}
+              </div>
+            </div>
+            <div class="h-[14%] grid grid-cols-3">
+              <div class="col-span-1 p-1 border-r-2 border-gray-800 flex items-center justify-start">
+                STORE NO
+              </div>
+              <div class="col-span-2 p-1 flex items-center justify-center">
+                {{storeNo}}
+              </div>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+  {{/each}}
+</body>
+</html>
